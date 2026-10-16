@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_riksbank_observations
+    columns:
+      - name: series_id
+        tests: [not_null]
+      - name: obs_date
+        tests: [not_null]
+      - name: value
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "series_id || '|' || cast(obs_date as varchar)"
+  - name: stg_scb_observations
+  - name: stg_ki_observations

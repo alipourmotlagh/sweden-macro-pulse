@@ -1,0 +1,25 @@
+# English / Swedish labels used by the export step. Add a key here for every published series or column.
+series:
+  policy_rate:
+    en: "Policy rate"
+    sv: "Styrränta"
+  stibor_3m:
+    en: "STIBOR 3 months"
+    sv: "STIBOR 3 månader"
+  gov_bond_10y:
+    en: "Government bond yield, 10 years"
+    sv: "Statsobligationsränta, 10 år"
+  spread_10y_policy:
+    en: "10-year yield minus policy rate (own calculation)"
+    sv: "10-årsränta minus styrränta (egen beräkning)"
+units:
+  "%":
+    en: "per cent"
+    sv: "procent"
+attribution:
+  riksbank:
+    en: "Source: Sveriges riksbank. Derived series are own calculations."
+    sv: "Källa: Sveriges riksbank. Härledda serier är egna beräkningar."
+disclaimer:
+  en: "Illustration of public data, not financial advice."
+  sv: "Illustration av offentliga data, inte finansiell rådgivning."

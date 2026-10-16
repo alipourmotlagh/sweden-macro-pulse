@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: mart_rates_monthly
+    description: Monthly average rates. spread_10y_policy is own calculation.
+    columns:
+      - name: month
+        tests: [not_null, unique]
+      - name: policy_rate
+        tests: [not_null]
+  - name: mart_catalogue
+    description: Coverage and freshness per series.
+    columns:
+      - name: series_key
+        tests: [not_null, unique]
+  - name: mart_ki_rates_vintages
+    description: KI interest-rate forecasts by release (vintage).
+    columns:
+      - name: vintage
+        tests: [not_null]
+      - name: period
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "vintage || '|' || variable || '|' || cast(period as varchar)"

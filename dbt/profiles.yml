@@ -1,0 +1,7 @@
+sweden_macro_pulse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('SMP_DB', '../data/smp.duckdb') }}"
+      threads: 1

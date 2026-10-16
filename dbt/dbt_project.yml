@@ -1,0 +1,14 @@
+name: sweden_macro_pulse
+version: "0.1.0"
+config-version: 2
+profile: sweden_macro_pulse
+
+model-paths: ["models"]
+test-paths: ["tests"]
+
+models:
+  sweden_macro_pulse:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

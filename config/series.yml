@@ -1,0 +1,44 @@
+# Source registry. One entry per series/table we ingest.
+# status: "verify" = endpoint/format written from documentation, NOT yet confirmed by a live run.
+# Flip to "ok" after the first successful GitHub Actions run (week-1 exit criterion).
+
+riksbank:
+  base_url: https://api.riksbank.se/swea/v1
+  # Optional key via env RIKSBANK_API_KEY (header Ocp-Apim-Subscription-Key). Works without, with tighter limits.
+  start: "2000-01-01"
+  min_seconds_between_calls: 13   # conservative for anonymous use; lower when a key is set
+  status: verify
+  series:
+    - id: SECBREPOEFF
+      key: policy_rate
+      unit: "%"
+    - id: SEDP3MSTIBORDELAYC
+      key: stibor_3m
+      unit: "%"
+    - id: SEGVB10YC
+      key: gov_bond_10y
+      unit: "%"
+
+scb:
+  base_url: https://statistikdatabasen.scb.se/api/v2
+  status: verify
+  # Filled in after scripts/discover_scb_tables.py has been run and tables chosen.
+  # Example entry:
+  # - table_id: TAB5919
+  #   key: cpif
+  #   selection: {ContentsCode: ["*"], Tid: ["*"]}
+  tables: []
+
+ki:
+  # KI PxWeb v1 API. Directory listings and metadata verified 2026-10-15; data POST verified on first Actions run.
+  # Terms: free reuse incl. commercial, manual or via API (konj.se "Så fungerar databaserna"). We credit KI anyway.
+  status: verify
+  stats_base: https://statistik.konj.se/PxWeb/api/v1/sv/KonjBar
+  forecast_base: https://prognos.konj.se/PxWeb/api/v1/sv
+  stats_tables:
+    - key: ki_barometer
+      path: indikatorer/Indikatorm.px      # barometer indicator and other indicators, monthly
+  forecast_tables:
+    # Fetches SenastePrognosen (latest) plus every release under TidigarePrognoser (quarterly vintages since 2015).
+    - key: ki_rates_monthly
+      path: f06_rantorochvaxelkurser/F0604.px   # includes 10y yield, 5y yield, 6m bill, ... (variable codes F0604*)

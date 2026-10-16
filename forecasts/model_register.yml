@@ -1,0 +1,27 @@
+# Every model used for public forecasts must be listed here with licence and check date.
+# Rule: only licences that allow public, commercial-adjacent use. Re-check licence before each model version change.
+models:
+  - name: naive
+    status: active
+    licence: n/a (own code)
+    checked: 2026-10-15
+  - name: ets_arima
+    status: planned
+    licence: BSD-3 (statsforecast) - verify at install
+    checked: null
+  - name: timesfm_2_5
+    status: planned
+    licence: Apache-2.0
+    checked: 2026-10-15
+  - name: chronos_2
+    status: planned
+    licence: Apache-2.0
+    checked: 2026-10-15
+  - name: tirex_2
+    status: candidate
+    licence: UNVERIFIED - do not use publicly until confirmed
+    checked: null
+  - name: timesfm_3
+    status: excluded
+    licence: non-commercial / non-production terms - excluded from public use
+    checked: 2026-10-15

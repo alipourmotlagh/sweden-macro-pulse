@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: Latest raw snapshot per series, loaded by ingest/load_duckdb.py. Older snapshots stay in data/raw/.
+    tables:
+      - name: riksbank_observations
+      - name: scb_observations
+      - name: ki_observations
