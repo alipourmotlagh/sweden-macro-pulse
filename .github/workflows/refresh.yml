@@ -42,7 +42,10 @@ jobs:
         run: |
           git config user.name "smp-bot"
           git config user.email "smp-bot@users.noreply.github.com"
-          git add data/raw published/archive forecasts/ledger.csv 2>/dev/null || true
+          # Add each path on its own: one missing path makes a combined `git add` abort and add nothing.
+          for p in data/raw published/archive forecasts/ledger.csv; do
+            if [ -e "$p" ]; then git add "$p"; fi
+          done
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
