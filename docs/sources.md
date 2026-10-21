@@ -12,7 +12,8 @@ Status: **verify** = written from documentation, not yet confirmed by a live dat
 
 ## Notes
 - Riksbank limits: anonymous 5 calls/min and 1,000/day per IP; with a key 200/min (FAQ: 30,000/week; portal's Developer subscription page says 10,000/week). Use the portal's **Developer** subscription, not "External data reporter" (that is for authorised reporters to the Riksbank).
-- KI forecast tables mix outcomes and forecast months in one series; `forecasts/ki_ledger.py` treats months after the release month as forecasts (assumption, check against real data).
+- KI forecast tables mix outcomes and forecast months in one series. Checked 2026-10-21 (`scripts/check_ki_outcomes.py`, 10-year yield vs the Riksbank's monthly averages, 2023-06 to 2026-06 releases): months before the release month equal the actual; the release month itself already differs, so `forecasts/ki_ledger.py` treats the release month onward as forecasts (release month = horizon 0, a nowcast).
+- Releases before 2023-06 use numeric period codes (`0`, `1`, ...) with `1993M01` only in the labels; the parser keeps the label as `period_label` and staging prefers it.
 - Sept 2026 KI release is in "latest" but not yet in "earlier forecasts"; we snapshot "latest" each run.
 - KI stops publishing outcome data (CPI, labour force, national accounts) on 1 Jan 2027: take outcomes from SCB.
 - KI download cap: 250,000 cells per request.

@@ -11,7 +11,7 @@ from forecasts import run_ledger
 from forecasts.ledger import read_ledger
 from forecasts.ki_ledger import load_from_duckdb
 from ingest.common import land_snapshot
-from tests.conftest import ki_rates_payload
+from tests.conftest import ki_rates_payload, ki_rates_payload_numeric
 from ingest.load_duckdb import load
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,7 +21,7 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     raw = tmp_path / "raw"
     for sid, payload in riksbank_payloads.items():
         land_snapshot("riksbank", sid, payload, raw_dir=raw)
-    land_snapshot("ki_forecast", "ki_rates_monthly__20260325", ki_rates_payload(2.0), raw_dir=raw)
+    land_snapshot("ki_forecast", "ki_rates_monthly__20260325", ki_rates_payload_numeric(2.0), raw_dir=raw)
     land_snapshot("ki_forecast", "ki_rates_monthly__20260616", ki_rates_payload(2.4), raw_dir=raw)
     land_snapshot("ki_forecast", "ki_rates_monthly__latest", ki_rates_payload(2.5), raw_dir=raw)
     db = tmp_path / "smp.duckdb"
@@ -41,7 +41,8 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     assert con.execute("select count(*) from main.mart_ki_rates_vintages").fetchone()[0] == 48  # 'latest' excluded
     ledger = load_from_duckdb(con, "F0604Sek10y", "gov_bond_10y")
     con.close()
-    assert {r["made_at"] for r in ledger} == {"2026-03-25", "2026-06-16"} and all(r["horizon"] >= 1 for r in ledger)
+    assert {r["made_at"] for r in ledger} == {"2026-03-25", "2026-06-16"} and all(r["horizon"] >= 0 for r in ledger)
+    assert any(r["horizon"] == 0 for r in ledger)  # release month itself is a forecast
 
     # silent forecast logging: naive baseline for all three series + KI vintages (only the variables present)
     ledger_path = tmp_path / "ledger.csv"

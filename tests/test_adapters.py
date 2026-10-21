@@ -33,3 +33,14 @@ def test_scb_sparse_value_dict():
                "dimension": {"Tid": {"category": {"index": ["a", "b"]}}}, "value": {"1": 7}}
     rows = scb_api.parse_jsonstat2("T", payload)
     assert [r["value"] for r in rows] == [None, 7.0]
+
+
+def test_jsonstat2_keeps_label_when_codes_are_numbers():
+    payload = {"id": ["period"], "size": [2],
+               "dimension": {"period": {"category": {"index": ["0", "1"], "label": {"0": "1993M01", "1": "1993M02"}}}},
+               "value": [1.0, 2.0]}
+    rows = scb_api.parse_jsonstat2("T", payload)
+    assert [(r["period"], r["period_label"]) for r in rows] == [("0", "1993M01"), ("1", "1993M02")]
+    same = {"id": ["period"], "size": [1], "dimension": {"period": {"category": {"index": ["1993M01"], "label": {"1993M01": "1993M01"}}}},
+            "value": [1.0]}
+    assert "period_label" not in scb_api.parse_jsonstat2("T", same)[0]  # no label noise when code is already readable

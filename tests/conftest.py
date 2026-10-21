@@ -53,6 +53,15 @@ def ki_rates_payload(base=2.0):
     }
 
 
+def ki_rates_payload_numeric(base=2.0):
+    """Same table in the layout of older KI releases: numeric period codes, 'YYYYMmm' only in the labels."""
+    payload = ki_rates_payload(base)
+    periods = [f"2026M{m:02d}" for m in range(1, 13)]
+    payload["dimension"]["period"]["category"] = {
+        "index": [str(i) for i in range(12)], "label": {str(i): p for i, p in enumerate(periods)}}
+    return payload
+
+
 class FakeResp:
     def __init__(self, data, status=200):
         self._data, self.status_code, self.headers = data, status, {}

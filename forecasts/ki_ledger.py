@@ -1,7 +1,8 @@
 """Turn KI forecast vintages into ledger rows (model = 'ki').
 
-Assumption (to verify against real data): in a vintage released on date R, months strictly after R's month are
-forecasts; earlier months are outcomes. Horizon = months ahead of the release month.
+Checked against real data (scripts/check_ki_outcomes.py, 2026-10-21): in a vintage released on date R, months before
+R's month equal the actual outcome; R's own month already differs, so it is a forecast (a "nowcast", horizon 0).
+Horizon = months ahead of the release month.
 """
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ def ki_vintage_rows(rows: list[tuple[str, str, str, float]], *, series: str) -> 
         rel = dt.datetime.strptime(vintage, "%Y%m%d").date()
         tgt = dt.date.fromisoformat(period)
         horizon = (tgt.year - rel.year) * 12 + (tgt.month - rel.month)
-        if horizon < 1:
+        if horizon < 0:
             continue
         out.append({"series": series, "model": "ki", "model_version": "konjunkturlaget", "made_at": rel.isoformat(),
                     "target_period": tgt.strftime("%Y-%m"), "horizon": horizon, "point": round(float(value), 4),

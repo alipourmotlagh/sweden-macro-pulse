@@ -35,21 +35,28 @@ def parse_jsonstat2(table_id: str, payload: dict) -> list[dict]:
     dim_ids: list[str] = payload["id"]
     sizes: list[int] = payload["size"]
     codes_per_dim = []
+    labels_per_dim = []
     for d in dim_ids:
-        index = payload["dimension"][d]["category"]["index"]
+        category = payload["dimension"][d]["category"]
+        index = category["index"]
         if isinstance(index, dict):
             codes = [c for c, _ in sorted(index.items(), key=lambda kv: kv[1])]
         else:
             codes = list(index)
         codes_per_dim.append(codes)
+        labels_per_dim.append(category.get("label") or {})
     values = payload["value"]
     get = (lambda i: values.get(str(i))) if isinstance(values, dict) else (lambda i: values[i])
     rows = []
     for flat, combo in enumerate(itertools.product(*[range(n) for n in sizes])):
         v = get(flat)
         row = {"table_id": table_id}
-        for d, codes, pos in zip(dim_ids, codes_per_dim, combo):
+        for d, codes, labels, pos in zip(dim_ids, codes_per_dim, labels_per_dim, combo):
             row[d] = codes[pos]
+            label = labels.get(codes[pos])
+            if label is not None and label != codes[pos]:
+                # Older KI releases use numeric period codes ("0", "1", ...) and put "1993M01" in the label.
+                row[f"{d}_label"] = label
         row["value"] = None if v is None else float(v)
         rows.append(row)
     return rows

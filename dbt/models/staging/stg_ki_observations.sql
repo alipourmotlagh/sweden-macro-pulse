@@ -4,7 +4,7 @@ select
     kind,
     vintage,
     json_extract_string(dims, '$.variabel') as variable,
-    json_extract_string(dims, '$.period')   as period_code,
+    coalesce(json_extract_string(dims, '$.period_label'), json_extract_string(dims, '$.period')) as period_code,
     dims,
     cast(value as double) as value,
     snapshot_file
