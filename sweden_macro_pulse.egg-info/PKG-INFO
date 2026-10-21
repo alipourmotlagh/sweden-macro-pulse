@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: sweden-macro-pulse
+Version: 0.1.0
+Summary: Open, tested pipeline for Swedish macro and finance data (Riksbank, SCB, KI).
+Requires-Python: >=3.11
+License-File: LICENSE
+Requires-Dist: requests>=2.31
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: duckdb>=1.0
+Requires-Dist: openpyxl>=3.1
+Requires-Dist: dbt-duckdb>=1.8
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Dynamic: license-file
