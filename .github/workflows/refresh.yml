@@ -1,0 +1,86 @@
+name: Refresh data and publish
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"      # weekly, Monday 05:17 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Ingest raw snapshots
+        run: python -m ingest.run
+        env:
+          RIKSBANK_API_KEY: ${{ secrets.RIKSBANK_API_KEY }}
+      - name: Load DuckDB
+        run: python -m ingest.load_duckdb
+      - name: dbt build (models + data tests)
+        working-directory: dbt
+        run: dbt build --profiles-dir . --project-dir .
+      - name: Export public data
+        run: python -m export.export --out site_out
+      - name: Commit new snapshots and monthly archive
+        id: commit
+        run: |
+          git config user.name "smp-bot"
+          git config user.email "smp-bot@users.noreply.github.com"
+          git add data/raw published/archive forecasts/ledger.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "data: new snapshots $(date -u +%F)"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Upload Pages artifact
+        if: steps.commit.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site_out
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  alert:
+    needs: [build, deploy]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue on failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Data refresh failed $(date -u +%F)" \
+            --body "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+data/smp.duckdb
+data/smp.duckdb.wal
+dbt/target/
+dbt/logs/
+site_out/
+.env
+.DS_Store
