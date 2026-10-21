@@ -21,7 +21,7 @@ import yaml
 
 DB_PATH = Path(os.environ.get("SMP_DB", "data/smp.duckdb"))
 SCHEMA_VERSION = "1.0"
-RATE_COLUMNS = ["policy_rate", "stibor_3m", "gov_bond_10y", "spread_10y_policy"]
+RATE_COLUMNS = ["policy_rate", "tbill_3m", "gov_bond_10y", "spread_10y_policy"]
 
 
 def build_rates_payload(con, i18n: dict, generated_at: str) -> dict:

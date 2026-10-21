@@ -4,7 +4,7 @@ Status: **verify** = written from documentation, not yet confirmed by a live dat
 
 | Source | What | Access | Status | Terms / attribution |
 |---|---|---|---|---|
-| Riksbank SWEA | Policy rate `SECBREPOEFF`, STIBOR 3M `SEDP3MSTIBORDELAYC`, 10y govt yield `SEGVB10YC` | REST `api.riksbank.se/swea/v1`, key optional (header `Ocp-Apim-Subscription-Key`) | base URL, key header, limits confirmed from Riksbank FAQ 2026-10-15; interval-observations path and response shape verify | "Källa: Sveriges riksbank" required for unchanged data; must not be credited on data we processed; commercial reuse free, no agreement; must not be presented as an official partnership |
+| Riksbank SWEA | Policy rate `SECBREPOEFF`, 3-month Treasury bill `SETB3MBENCH`, 10y govt yield `SEGVB10YC` | REST `api.riksbank.se/swea/v1`, key optional (header `Ocp-Apim-Subscription-Key`) | base URL, key header, limits confirmed from Riksbank FAQ 2026-10-15; interval-observations path and response shape verify | "Källa: Sveriges riksbank" required for unchanged data; must not be credited on data we processed; commercial reuse free, no agreement; must not be presented as an official partnership |
 | Riksbank forecasts | Repo-rate / CPIF forecast vintages (from 2020) | REST | not built | Variables and format unverified |
 | KI statistics | Barometer indicator (`KonjBar/indikatorer/Indikatorm.px`) | PxWeb v1 API | directory + metadata verified 2026-10-15; data request verify | Free reuse incl. commercial, manual or API (konj.se "Så fungerar databaserna"). No attribution wording stated; we credit KI |
 | KI forecasts | Latest (`SenastePrognosen`) and every quarterly release since 2015 (`TidigarePrognoser/<YYYYMMDD>`), 11 topic folders; first table: `f06.../F0604.px` (monthly interest rates) | PxWeb v1 API | as above | As above |
@@ -16,6 +16,8 @@ Status: **verify** = written from documentation, not yet confirmed by a live dat
 - Sept 2026 KI release is in "latest" but not yet in "earlier forecasts"; we snapshot "latest" each run.
 - KI stops publishing outcome data (CPI, labour force, national accounts) on 1 Jan 2027: take outcomes from SCB.
 - KI download cap: 250,000 cells per request.
+
+- STIBOR is not used: the Riksbank's STIBOR series are closed (last data 2020-07-03, checked 2026-10-21 in the `Series` list). SFBF publishes STIBOR now; its terms (swfbf.se/terms, /subscribe) prohibit redistribution and derived products without a paid licence, so a public chart is out. The 3-month Treasury bill is the substitute short rate and is labelled as such.
 
 ## Open items
 1. Run `scripts/discover_scb_tables.py`, pick table IDs, fill `config/series.yml`.

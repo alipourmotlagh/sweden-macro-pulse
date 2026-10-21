@@ -46,7 +46,7 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     export(out, db_path=db, i18n_path=str(ROOT / "config" / "i18n.yml"),
            archive_dir=tmp_path / "archive", now=now)
     data = json.loads((out / "v1" / "rates_monthly.json").read_text())
-    assert {s["id"] for s in data["series"]} == {"policy_rate", "stibor_3m", "gov_bond_10y", "spread_10y_policy"}
+    assert {s["id"] for s in data["series"]} == {"policy_rate", "tbill_3m", "gov_bond_10y", "spread_10y_policy"}
     assert data["series"][0]["label"]["sv"] == "Styrränta"
     assert "Sveriges riksbank" in data["meta"]["attribution"]["en"]
     assert (out / "v1" / "rates_monthly.csv").read_text().startswith("month,policy_rate")

@@ -12,8 +12,10 @@ riksbank:
     - id: SECBREPOEFF
       key: policy_rate
       unit: "%"
-    - id: SEDP3MSTIBORDELAYC
-      key: stibor_3m
+    # STIBOR (SEDP3MSTIBORDELAYC) is closed at the Riksbank since 2020-07-03; SFBF's licence restricts reuse.
+    # The 3-month Treasury bill is a live, openly reusable short-term market rate.
+    - id: SETB3MBENCH
+      key: tbill_3m
       unit: "%"
     - id: SEGVB10YC
       key: gov_bond_10y

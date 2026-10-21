@@ -21,7 +21,7 @@ def synthetic_riksbank(start="2022-01-03", days=900, base=0.0, step_every=120, s
 def riksbank_payloads():
     return {
         "SECBREPOEFF": synthetic_riksbank(base=0.0),
-        "SEDP3MSTIBORDELAYC": synthetic_riksbank(base=0.1),
+        "SETB3MBENCH": synthetic_riksbank(base=0.1),
         "SEGVB10YC": synthetic_riksbank(base=1.0, step_every=90, step=0.1),
     }
 

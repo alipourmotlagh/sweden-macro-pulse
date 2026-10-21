@@ -3,9 +3,9 @@ series:
   policy_rate:
     en: "Policy rate"
     sv: "Styrränta"
-  stibor_3m:
-    en: "STIBOR 3 months"
-    sv: "STIBOR 3 månader"
+  tbill_3m:
+    en: "Treasury bill yield, 3 months"
+    sv: "Statsskuldväxelränta, 3 månader"
   gov_bond_10y:
     en: "Government bond yield, 10 years"
     sv: "Statsobligationsränta, 10 år"
