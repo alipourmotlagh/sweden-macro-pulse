@@ -1,0 +1,35 @@
+{
+ "meta": {
+  "schema_version": "1.0",
+  "generated_at": "2026-10-21T19:30:57Z"
+ },
+ "series": [
+  {
+   "source": "riksbank",
+   "series_key": "gov_bond_10y",
+   "source_id": "SEGVB10YC",
+   "first_obs": "2000-01-03",
+   "last_obs": "2026-10-20",
+   "n_obs": 6731,
+   "days_since_last_obs": 1
+  },
+  {
+   "source": "riksbank",
+   "series_key": "policy_rate",
+   "source_id": "SECBREPOEFF",
+   "first_obs": "2000-01-03",
+   "last_obs": "2026-10-21",
+   "n_obs": 6732,
+   "days_since_last_obs": 0
+  },
+  {
+   "source": "riksbank",
+   "series_key": "stibor_3m",
+   "source_id": "SEDP3MSTIBORDELAYC",
+   "first_obs": "2000-01-03",
+   "last_obs": "2020-07-03",
+   "n_obs": 5146,
+   "days_since_last_obs": 2301
+  }
+ ]
+}
