@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 
 from export.export import export
+from forecasts import run_ledger
+from forecasts.ledger import read_ledger
 from forecasts.ki_ledger import load_from_duckdb
 from ingest.common import land_snapshot
 from tests.conftest import ki_rates_payload
@@ -40,6 +42,18 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     ledger = load_from_duckdb(con, "F0604Sek10y", "gov_bond_10y")
     con.close()
     assert {r["made_at"] for r in ledger} == {"2026-03-25", "2026-06-16"} and all(r["horizon"] >= 1 for r in ledger)
+
+    # silent forecast logging: naive baseline for all three series + KI vintages (only the variables present)
+    ledger_path = tmp_path / "ledger.csv"
+    today = dt.date(2026, 10, 21)
+    added = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today)
+    assert added["naive"] == 3 * 12 and added["ki"] > 0
+    led = read_ledger(ledger_path)
+    naive = [r for r in led if r["model"] == "naive" and r["series"] == "policy_rate"]
+    assert [r["target_period"] for r in naive][:2] == ["2026-11", "2026-12"] and naive[0]["made_at"] == "2026-10-01"
+    assert {r["series"] for r in led if r["model"] == "ki"} == {"gov_bond_10y"}
+    again = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today)  # same month: nothing new, no error
+    assert again == {"naive": 0, "ki": 0}
 
     out = tmp_path / "site"
     now = dt.datetime(2026, 10, 15, tzinfo=dt.timezone.utc)

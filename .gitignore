@@ -9,3 +9,4 @@ dbt/logs/
 site_out/
 .env
 .DS_Store
+*.egg-info/

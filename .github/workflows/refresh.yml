@@ -35,6 +35,8 @@ jobs:
       - name: dbt build (models + data tests)
         working-directory: dbt
         run: dbt build --profiles-dir . --project-dir .
+      - name: Log forecasts to the ledger (silent logging)
+        run: python -m forecasts.run_ledger
       - name: Export public data
         run: python -m export.export --out site_out
       - name: Commit new snapshots and monthly archive
