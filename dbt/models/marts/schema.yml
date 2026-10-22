@@ -23,3 +23,25 @@ models:
     tests:
       - unique:
           column_name: "vintage || '|' || variable || '|' || cast(period as varchar)"
+  - name: mart_cpif_monthly
+    description: CPIF annual change in percent (SCB TAB6590), as published.
+    columns:
+      - name: month
+        tests: [not_null]
+      - name: value
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "series_key || '|' || cast(month as varchar)"
+  - name: mart_mortgage_monthly
+    description: Households' housing-loan interest rates by agreement type and fixation period (SCB TAB5783, source the Riksbank).
+    columns:
+      - name: series_key
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+      - name: value
+        tests: [not_null]
+    tests:
+      - unique:
+          column_name: "series_key || '|' || cast(month as varchar)"

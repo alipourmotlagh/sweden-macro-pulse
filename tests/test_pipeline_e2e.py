@@ -11,7 +11,7 @@ from forecasts import run_ledger
 from forecasts.ledger import read_ledger
 from forecasts.ki_ledger import load_from_duckdb
 from ingest.common import land_snapshot
-from tests.conftest import ki_rates_payload, ki_rates_payload_numeric
+from tests.conftest import ki_rates_payload, ki_rates_payload_numeric, scb_cpif_payload, scb_mortgage_payload
 from ingest.load_duckdb import load
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,10 +24,13 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     land_snapshot("ki_forecast", "ki_rates_monthly__20260325", ki_rates_payload_numeric(2.0), raw_dir=raw)
     land_snapshot("ki_forecast", "ki_rates_monthly__20260616", ki_rates_payload(2.4), raw_dir=raw)
     land_snapshot("ki_forecast", "ki_rates_monthly__latest", ki_rates_payload(2.5), raw_dir=raw)
+    land_snapshot("scb", "cpif", scb_cpif_payload(), raw_dir=raw)
+    land_snapshot("scb", "mortgage_rates", scb_mortgage_payload(), raw_dir=raw)
     db = tmp_path / "smp.duckdb"
     counts = load(config_path=str(ROOT / "config" / "series.yml"), db_path=db, raw_dir=raw)
     assert counts["riksbank_observations"] > 1000
     assert counts["ki_observations"] == 3 * 24
+    assert counts["scb_observations"] == 24 + 2 * 5 * 24
 
     env = {**os.environ, "SMP_DB": str(db)}
     proc = subprocess.run(
@@ -65,6 +68,15 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     assert data["series"][0]["label"]["sv"] == "Styrränta"
     assert "Sveriges riksbank" in data["meta"]["attribution"]["en"]
     assert (out / "v1" / "rates_monthly.csv").read_text().startswith("month,policy_rate")
+    mort = json.loads((out / "v1" / "mortgage_rates_monthly.json").read_text())
+    assert len(mort["series"]) == 10 and all(len(s["points"]) == 24 for s in mort["series"])
+    assert {s["id"] for s in mort["series"]} >= {"mortgage_new_floating", "mortgage_outstanding_5y_plus"}
+    assert mort["series"][0]["label"]["sv"].startswith("Bolåneränta") and "Sveriges riksbank" in mort["meta"]["attribution"]["en"]
+    cpif = json.loads((out / "v1" / "cpif_monthly.json").read_text())
+    assert [s["id"] for s in cpif["series"]] == ["cpif_annual"] and cpif["series"][0]["points"][0] == ["2024-01-01", 1.0]
+    cat = json.loads((out / "v1" / "catalogue.json").read_text())
+    assert {s["series_key"] for s in cat["series"] if s["source"] == "scb"} >= {"cpif_annual", "mortgage_new_floating"}
+    assert (out / "v1" / "cpif_monthly.csv").exists()
     assert (out / "archive" / "2026-10" / "rates_monthly.json").exists()
     # archive is not overwritten within the same month
     before = (tmp_path / "archive" / "2026-10" / "rates_monthly.json").read_text()

@@ -39,6 +39,28 @@ def jsonstat2_payload():
     }
 
 
+def _jsonstat(dim_codes: dict[str, list[str]], values: list[float]) -> dict:
+    return {"version": "2.0", "class": "dataset", "id": list(dim_codes), "size": [len(c) for c in dim_codes.values()],
+            "dimension": {d: {"category": {"index": {c: i for i, c in enumerate(codes)}}} for d, codes in dim_codes.items()},
+            "value": values}
+
+
+def scb_cpif_payload():
+    """Synthetic SCB TAB6590 selection: CPIF annual change, 24 months."""
+    months = [f"{y}M{m:02d}" for y in (2024, 2025) for m in range(1, 13)]
+    return _jsonstat({"ContentsCode": ["000007ZM"], "Tid": months}, [round(1.0 + 0.1 * i, 1) for i in range(24)])
+
+
+def scb_mortgage_payload():
+    """Synthetic SCB TAB5783 selection: 2 agreement types x 5 fixation groups x 24 months."""
+    months = [f"{y}M{m:02d}" for y in (2024, 2025) for m in range(1, 13)]
+    dims = {"Referenssektor": ["1"], "Motpartssektor": ["2c"], "Avtal": ["0100", "0200"],
+            "Rantebindningstid": ["1.1", "1.1.1", "1.1.2.1", "1.1.2.2", "1.1.2.3"],
+            "ContentsCode": ["000004ZW"], "Tid": months}
+    values = [round(3.0 + 0.01 * i, 4) for i in range(2 * 5 * 24)]   # 3.00 .. 5.39, inside the plausibility band
+    return _jsonstat(dims, values)
+
+
 def ki_rates_payload(base=2.0):
     """Synthetic json-stat2 shaped like KI table F0604 (variabel x enhet x period)."""
     periods = [f"2026M{m:02d}" for m in range(1, 13)]

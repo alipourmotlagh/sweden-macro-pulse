@@ -3,6 +3,8 @@
 Layout written under --out (default site_out/):
     v1/rates_monthly.json   {meta, series:[{id,label:{en,sv},unit,points:[[YYYY-MM-DD,value],...]}]}
     v1/rates_monthly.csv
+    v1/mortgage_rates_monthly.json / .csv   households' housing-loan rates (SCB TAB5783)
+    v1/cpif_monthly.json / .csv             CPIF annual change (SCB TAB6590)
     v1/catalogue.json       coverage + freshness per series
     archive/<YYYY-MM>/...   monthly "as published" copy (kept in repo under published/archive)
 """
@@ -50,6 +52,20 @@ def build_rates_payload(con, i18n: dict, generated_at: str) -> dict:
     }
 
 
+def build_long_payload(con, mart: str, i18n: dict, generated_at: str, *, attribution_key: str) -> dict:
+    """Payload for a long mart (month, series_key, value) in the same shape as the rates payload."""
+    rows = con.execute(f"select month, series_key, value from main.{mart} order by series_key, month").fetchall()
+    by_key: dict[str, list] = {}
+    for month, key, value in rows:
+        by_key.setdefault(key, []).append([month.isoformat(), value])
+    series = [{"id": key, "label": i18n["series"][key], "unit": "%", "unit_label": i18n["units"]["%"],
+               "derived": False, "points": points} for key, points in by_key.items()]
+    last = max((p[-1][0] for p in by_key.values()), default=None)
+    return {"meta": {"schema_version": SCHEMA_VERSION, "generated_at": generated_at, "frequency": "monthly",
+                     "attribution": i18n["attribution"][attribution_key], "disclaimer": i18n["disclaimer"],
+                     "last_period": last}, "series": series}
+
+
 def build_catalogue(con, generated_at: str) -> dict:
     cols = ["source", "series_key", "source_id", "first_obs", "last_obs", "n_obs", "days_since_last_obs"]
     rows = con.execute("select " + ", ".join(cols) + " from main.mart_catalogue order by 1, 2").fetchall()
@@ -74,6 +90,8 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     i18n = yaml.safe_load(Path(i18n_path).read_text())
     con = duckdb.connect(str(db_path), read_only=True)
     rates = build_rates_payload(con, i18n, generated_at)
+    mortgage = build_long_payload(con, "mart_mortgage_monthly", i18n, generated_at, attribution_key="scb_riksbank")
+    cpif = build_long_payload(con, "mart_cpif_monthly", i18n, generated_at, attribution_key="scb")
     catalogue = build_catalogue(con, generated_at)
     con.close()
 
@@ -82,6 +100,10 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     written = []
     (v1 / "rates_monthly.json").write_text(json.dumps(rates, ensure_ascii=False, indent=1))
     write_csv(rates, v1 / "rates_monthly.csv")
+    for name, payload in (("mortgage_rates_monthly", mortgage), ("cpif_monthly", cpif)):
+        (v1 / f"{name}.json").write_text(json.dumps(payload, ensure_ascii=False, indent=1))
+        write_csv(payload, v1 / f"{name}.csv")
+        written += [v1 / f"{name}.json", v1 / f"{name}.csv"]
     (v1 / "catalogue.json").write_text(json.dumps(catalogue, ensure_ascii=False, indent=1))
     written += [v1 / "rates_monthly.json", v1 / "rates_monthly.csv", v1 / "catalogue.json"]
 

@@ -12,6 +12,39 @@ series:
   spread_10y_policy:
     en: "10-year yield minus policy rate (own calculation)"
     sv: "10-årsränta minus styrränta (egen beräkning)"
+  cpif_annual:
+    en: "CPIF inflation, annual change"
+    sv: "KPIF-inflation, årlig förändring"
+  mortgage_new_total:
+    en: "Mortgage rate, new agreements, all fixation periods"
+    sv: "Bolåneränta, nya avtal, alla bindningstider"
+  mortgage_new_floating:
+    en: "Mortgage rate, new agreements, floating (up to 3 months)"
+    sv: "Bolåneränta, nya avtal, rörlig (upp till 3 månader)"
+  mortgage_new_3m_1y:
+    en: "Mortgage rate, new agreements, 3 months to 1 year"
+    sv: "Bolåneränta, nya avtal, 3 månader till 1 år"
+  mortgage_new_1_5y:
+    en: "Mortgage rate, new agreements, 1 to 5 years"
+    sv: "Bolåneränta, nya avtal, 1 till 5 år"
+  mortgage_new_5y_plus:
+    en: "Mortgage rate, new agreements, over 5 years"
+    sv: "Bolåneränta, nya avtal, över 5 år"
+  mortgage_outstanding_total:
+    en: "Mortgage rate, outstanding loans, all fixation periods"
+    sv: "Bolåneränta, utestående lån, alla bindningstider"
+  mortgage_outstanding_floating:
+    en: "Mortgage rate, outstanding loans, floating (up to 3 months)"
+    sv: "Bolåneränta, utestående lån, rörlig (upp till 3 månader)"
+  mortgage_outstanding_3m_1y:
+    en: "Mortgage rate, outstanding loans, 3 months to 1 year"
+    sv: "Bolåneränta, utestående lån, 3 månader till 1 år"
+  mortgage_outstanding_1_5y:
+    en: "Mortgage rate, outstanding loans, 1 to 5 years"
+    sv: "Bolåneränta, utestående lån, 1 till 5 år"
+  mortgage_outstanding_5y_plus:
+    en: "Mortgage rate, outstanding loans, over 5 years"
+    sv: "Bolåneränta, utestående lån, över 5 år"
 units:
   "%":
     en: "per cent"
@@ -20,6 +53,12 @@ attribution:
   riksbank:
     en: "Source: Sveriges riksbank. Derived series are own calculations."
     sv: "Källa: Sveriges riksbank. Härledda serier är egna beräkningar."
+  scb:
+    en: "Source: Statistics Sweden."
+    sv: "Källa: Statistiska centralbyrån."
+  scb_riksbank:
+    en: "Source: Sveriges riksbank (published via Statistics Sweden)."
+    sv: "Källa: Sveriges riksbank (via Statistiska centralbyrån)."
 disclaimer:
   en: "Illustration of public data, not financial advice."
   sv: "Illustration av offentliga data, inte finansiell rådgivning."
