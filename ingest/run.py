@@ -7,7 +7,7 @@ from pathlib import Path
 
 import yaml
 
-from . import ki_pxweb, riksbank_api, scb_api
+from . import ki_pxweb, riksbank_api, riksbank_mpd, scb_api
 
 
 def main(config_path: str = "config/series.yml") -> int:
@@ -16,6 +16,7 @@ def main(config_path: str = "config/series.yml") -> int:
         "riksbank": riksbank_api.ingest(cfg["riksbank"]),
         "scb": scb_api.ingest(cfg["scb"]),
         "ki": ki_pxweb.ingest(cfg["ki"]),
+        "riksbank_mpd": riksbank_mpd.ingest(cfg.get("riksbank_mpd", {})),
     }
     new_any = False
     for source, landed in results.items():

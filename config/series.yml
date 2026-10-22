@@ -21,6 +21,12 @@ riksbank:
       key: gov_bond_10y
       unit: "%"
 
+riksbank_mpd:
+  # Monetary Policy Data API v1: the Riksbank's own forecasts per policy round (e.g. '2024:1'). Raw landing only until
+  # the series ids are known (first run lands forecasts/series_ids and forecasts/policy_rounds). Same key as SWEA.
+  base_url: https://api.riksbank.se/monetary_policy_data/v1
+  status: verify
+
 scb:
   # PxWebApi 2. API data is CC0 (SCB recommends "Source: Statistics Sweden"); data from other agencies credit that agency.
   # Limits: 10 calls per 10 s per IP, 100,000 values per table. Checked 2026-10-22.

@@ -48,7 +48,8 @@ def _jsonstat(dim_codes: dict[str, list[str]], values: list[float]) -> dict:
 def scb_cpif_payload():
     """Synthetic SCB TAB6590 selection: CPIF annual change, 24 months."""
     months = [f"{y}M{m:02d}" for y in (2024, 2025) for m in range(1, 13)]
-    return _jsonstat({"ContentsCode": ["000007ZM"], "Tid": months}, [round(1.0 + 0.1 * i, 1) for i in range(24)])
+    values = [None] + [round(1.0 + 0.1 * i, 1) for i in range(1, 24)]   # first month null, like real 1987M01
+    return _jsonstat({"ContentsCode": ["000007ZM"], "Tid": months}, values)
 
 
 def scb_mortgage_payload():
@@ -115,3 +116,23 @@ class FakeKiSession:
     def post(self, url, json=None, headers=None, timeout=None):
         self.posts.append((url, json))
         return FakeResp(ki_rates_payload())
+
+
+class FakeMpdSession:
+    """Mimics the Riksbank Monetary Policy Data endpoints (shapes taken from the API docs)."""
+    def __init__(self, fail_rounds=(), auth_error=False):
+        self.calls, self.fail_rounds, self.auth_error = [], set(fail_rounds), auth_error
+
+    def get(self, url, params=None, headers=None, timeout=None):
+        self.calls.append((url, params, headers))
+        if self.auth_error:
+            return FakeResp({}, 401)
+        if url.endswith("/forecasts/series_ids"):
+            return FakeResp({"data": [{"series_id": "SEQGDPNAASA", "metadata": {"decimals": 1, "unit": "pct"}}]})
+        if url.endswith("/forecasts/policy_rounds"):
+            return FakeResp({"data": ["2024:2", "2024:1", "2023:4"]})
+        rnd = params["policy_round_name"]
+        if rnd in self.fail_rounds:
+            return FakeResp({}, 404)
+        return FakeResp({"data": [{"external_id": "SEQGDPNAASA", "vintages": [
+            {"metadata": {"policy_round": rnd}, "observations": [{"dt": "2025-01-01", "value": 1.5}]}]}]})

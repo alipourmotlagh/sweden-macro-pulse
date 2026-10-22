@@ -73,7 +73,7 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     assert {s["id"] for s in mort["series"]} >= {"mortgage_new_floating", "mortgage_outstanding_5y_plus"}
     assert mort["series"][0]["label"]["sv"].startswith("Bolåneränta") and "Sveriges riksbank" in mort["meta"]["attribution"]["en"]
     cpif = json.loads((out / "v1" / "cpif_monthly.json").read_text())
-    assert [s["id"] for s in cpif["series"]] == ["cpif_annual"] and cpif["series"][0]["points"][0] == ["2024-01-01", 1.0]
+    assert [s["id"] for s in cpif["series"]] == ["cpif_annual"] and cpif["series"][0]["points"][0] == ["2024-02-01", 1.1]  # null first month dropped
     cat = json.loads((out / "v1" / "catalogue.json").read_text())
     assert {s["series_key"] for s in cat["series"] if s["source"] == "scb"} >= {"cpif_annual", "mortgage_new_floating"}
     assert (out / "v1" / "cpif_monthly.csv").exists()
