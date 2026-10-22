@@ -119,9 +119,9 @@ class FakeKiSession:
 
 
 class FakeMpdSession:
-    """Mimics the Riksbank Monetary Policy Data endpoints. `accept` is the series-format the fake API accepts:
-    'comma', 'repeated' or 'one' (a single series per request). Requests without `series` get an empty 404, like the real API did."""
-    def __init__(self, fail_rounds=(), auth_error=False, accept="comma"):
+    """Mimics the Riksbank Monetary Policy Data endpoints. Like the real API, /forecasts needs ONE series and the
+    round name with a LITERAL colon (accept='literal') or a percent-encoded one (accept='encoded'); else an empty 404."""
+    def __init__(self, fail_rounds=(), auth_error=False, accept="literal"):
         self.calls, self.fail_rounds, self.auth_error, self.accept = [], set(fail_rounds), auth_error, accept
 
     def get(self, url, params=None, headers=None, timeout=None):
@@ -132,12 +132,14 @@ class FakeMpdSession:
             return FakeResp({"data": [{"series_id": "SEQRATENAYNA", "metadata": {"decimals": 2, "unit": "Per cent"}}]})
         if url.endswith("/forecasts/policy_rounds"):
             return FakeResp({"data": ["2024:2", "2024:1", "2023:4"]})
-        rnd, ser = params.get("policy_round_name"), params.get("series")
-        ok = ((self.accept == "comma" and isinstance(ser, str) and "," in ser)
-              or (self.accept == "repeated" and isinstance(ser, list))
-              or (self.accept == "one" and isinstance(ser, str) and "," not in ser))
-        if not ok or rnd in self.fail_rounds:
+        import re
+        m = re.search(r"policy_round_name=([^&]+)&series=([^&,]+)$", url)
+        if not m or params:
             return FakeResp({}, 404)
-        ids = ser if isinstance(ser, list) else ser.split(",")
-        return FakeResp({"data": [{"external_id": i, "vintages": [
-            {"metadata": {"policy_round": rnd}, "observations": [{"dt": "2025-03-31", "value": 1.5}]}]} for i in ids]})
+        rnd, sid = m.groups()
+        literal_ok = self.accept == "literal" and ":" in rnd and "%3A" not in rnd
+        encoded_ok = self.accept == "encoded" and "%3A" in rnd
+        if not (literal_ok or encoded_ok) or rnd.replace("%3A", ":") in self.fail_rounds:
+            return FakeResp({}, 404)
+        return FakeResp({"data": [{"external_id": sid, "vintages": [
+            {"metadata": {"policy_round": rnd.replace("%3A", ":")}, "observations": [{"dt": "2025-03-31", "value": 1.5}]}]}]})

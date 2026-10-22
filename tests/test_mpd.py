@@ -1,48 +1,63 @@
+import json
+
 from ingest import riksbank_mpd
 from tests.conftest import FakeMpdSession
 
-CFG = {"base_url": "https://x/monetary_policy_data/v1", "series": ["SEQRATENAYNA", "SEMCPIFNAYNA"]}
+CFG = {"base_url": "https://x/monetary_policy_data/v1", "series": ["SEQRATENAYNA", "SEMCPIFNAYNA"], "pause_seconds": 0}
 
 
 def names(landed):
     return sorted(p.parent.name for p, _ in landed)
 
 
-def test_lands_series_rounds_and_each_round(tmp_path, monkeypatch):
+def run(tmp, session, cfg=CFG, logs=None):
+    return riksbank_mpd.ingest(cfg, raw_dir=tmp, session=session, log=(logs.append if logs is not None else (lambda m: None)),
+                               sleep=lambda s: None)
+
+
+def test_url_keeps_colon_literal_by_default():
+    u = riksbank_mpd.forecast_url("https://b", "2024:1", "S1", literal_colon=True)
+    assert u == "https://b/forecasts?policy_round_name=2024:1&series=S1"
+    assert "%3A" in riksbank_mpd.forecast_url("https://b", "2024:1", "S1", literal_colon=False)
+
+
+def test_lands_series_rounds_and_each_round_one_series_per_request(tmp_path, monkeypatch):
     monkeypatch.setenv("RIKSBANK_API_KEY", "k")
     s = FakeMpdSession()
-    landed = riksbank_mpd.ingest(CFG, raw_dir=tmp_path, session=s, log=lambda m: None)
+    landed = run(tmp_path, s)
     assert names(landed) == ["forecasts__2023-4", "forecasts__2024-1", "forecasts__2024-2", "policy_rounds", "series_ids"]
-    assert all(h.get("Ocp-Apim-Subscription-Key") == "k" for _, _, h in s.calls)   # key sent as header, never in URL
+    assert all(h.get("Ocp-Apim-Subscription-Key") == "k" for _, _, h in s.calls)   # key in header, never in URL
+    assert not any("key" in u.lower() for u, _, _ in s.calls)
+    snap = json.loads(next(p for p, _ in landed if p.parent.name == "forecasts__2024-1").read_text())
+    assert snap["policy_round_name"] == "2024:1" and set(snap["responses"]) == {"SEQRATENAYNA", "SEMCPIFNAYNA"}
+    assert len([c for c in s.calls if "policy_round_name=2024:1&" in c[0]]) == 2   # 2 series -> 2 requests
 
 
-def test_probe_finds_the_accepted_series_format(tmp_path):
-    for accept in ("comma", "repeated", "one"):
-        logs = []
-        landed = riksbank_mpd.ingest(CFG, raw_dir=tmp_path / accept, session=FakeMpdSession(accept=accept), log=logs.append)
-        assert any(f"'{'one_per_series' if accept == 'one' else accept}' works" in m for m in logs), (accept, logs)
-        assert len(names(landed)) == 5
+def test_probe_falls_back_to_encoded_colon(tmp_path):
+    logs = []
+    landed = run(tmp_path, FakeMpdSession(accept="encoded"), logs=logs)
+    assert len(names(landed)) == 5 and any("encoded colon works" in m for m in logs)
 
 
 def test_past_rounds_fetched_once_newest_refetched(tmp_path):
     s = FakeMpdSession()
-    riksbank_mpd.ingest(CFG, raw_dir=tmp_path, session=s, log=lambda m: None)
-    n = len([c for c in s.calls if c[1]])
-    riksbank_mpd.ingest(CFG, raw_dir=tmp_path, session=s, log=lambda m: None)
-    assert len([c for c in s.calls if c[1]]) - n == 1       # only the newest round (2024:2)
+    run(tmp_path, s)
+    n = len(s.calls)
+    run(tmp_path, s)
+    refetched = [c for c in s.calls[n:] if "policy_round_name" in c[0]]
+    assert len(refetched) == 2 and all("2024:2" in c[0] for c in refetched)   # newest round only, both series
 
 
 def test_failure_is_a_visible_warning_not_a_crash(tmp_path):
     logs = []
-    assert riksbank_mpd.ingest(CFG, raw_dir=tmp_path, session=FakeMpdSession(auth_error=True), log=logs.append) == []
+    assert run(tmp_path, FakeMpdSession(auth_error=True), logs=logs) == []
     assert logs and logs[0].startswith("::warning::")
-    logs.clear()   # a format the API never accepts: one probe pass, then stop (no per-round warning flood)
-    s = FakeMpdSession(accept="none")
-    landed = riksbank_mpd.ingest(CFG, raw_dir=tmp_path / "b", session=s, log=logs.append)
-    assert names(landed) == ["policy_rounds", "series_ids"] and any("no request variant" in m for m in logs)
+    logs.clear()
+    landed = run(tmp_path / "b", FakeMpdSession(accept="none"), logs=logs)
+    assert names(landed) == ["policy_rounds", "series_ids"] and any("no request form" in m for m in logs)
     assert not [m for m in logs if m.startswith("::warning::riksbank_mpd round")]
     logs.clear()
-    landed = riksbank_mpd.ingest(CFG, raw_dir=tmp_path / "c", session=FakeMpdSession(fail_rounds=["2024:1"]), log=logs.append)
+    landed = run(tmp_path / "c", FakeMpdSession(fail_rounds=["2024:1"]), logs=logs)
     assert "forecasts__2024-1" not in names(landed) and any("2024:1" in m for m in logs)
 
 
