@@ -119,20 +119,25 @@ class FakeKiSession:
 
 
 class FakeMpdSession:
-    """Mimics the Riksbank Monetary Policy Data endpoints (shapes taken from the API docs)."""
-    def __init__(self, fail_rounds=(), auth_error=False):
-        self.calls, self.fail_rounds, self.auth_error = [], set(fail_rounds), auth_error
+    """Mimics the Riksbank Monetary Policy Data endpoints. `accept` is the series-format the fake API accepts:
+    'comma', 'repeated' or 'one' (a single series per request). Requests without `series` get an empty 404, like the real API did."""
+    def __init__(self, fail_rounds=(), auth_error=False, accept="comma"):
+        self.calls, self.fail_rounds, self.auth_error, self.accept = [], set(fail_rounds), auth_error, accept
 
     def get(self, url, params=None, headers=None, timeout=None):
         self.calls.append((url, params, headers))
         if self.auth_error:
             return FakeResp({}, 401)
         if url.endswith("/forecasts/series_ids"):
-            return FakeResp({"data": [{"series_id": "SEQGDPNAASA", "metadata": {"decimals": 1, "unit": "pct"}}]})
+            return FakeResp({"data": [{"series_id": "SEQRATENAYNA", "metadata": {"decimals": 2, "unit": "Per cent"}}]})
         if url.endswith("/forecasts/policy_rounds"):
             return FakeResp({"data": ["2024:2", "2024:1", "2023:4"]})
-        rnd = params["policy_round_name"]
-        if rnd in self.fail_rounds:
+        rnd, ser = params.get("policy_round_name"), params.get("series")
+        ok = ((self.accept == "comma" and isinstance(ser, str) and "," in ser)
+              or (self.accept == "repeated" and isinstance(ser, list))
+              or (self.accept == "one" and isinstance(ser, str) and "," not in ser))
+        if not ok or rnd in self.fail_rounds:
             return FakeResp({}, 404)
-        return FakeResp({"data": [{"external_id": "SEQGDPNAASA", "vintages": [
-            {"metadata": {"policy_round": rnd}, "observations": [{"dt": "2025-01-01", "value": 1.5}]}]}]})
+        ids = ser if isinstance(ser, list) else ser.split(",")
+        return FakeResp({"data": [{"external_id": i, "vintages": [
+            {"metadata": {"policy_round": rnd}, "observations": [{"dt": "2025-03-31", "value": 1.5}]}]} for i in ids]})

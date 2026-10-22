@@ -26,6 +26,12 @@ riksbank_mpd:
   # the series ids are known (first run lands forecasts/series_ids and forecasts/policy_rounds). Same key as SWEA.
   base_url: https://api.riksbank.se/monetary_policy_data/v1
   status: verify
+  # Chosen from the landed series_ids (2026-10-22). Policy rate is a QUARTERLY mean; the CPIF/CPI series are annual % change.
+  series:
+    - SEQRATENAYNA     # policy rate, quarterly mean values, per cent
+    - SEMCPIFNAYNA     # CPIF, annual percentage change
+    - SEMCPINAYNA      # CPI, annual percentage change
+    - SEDMENAYNA       # policy rate expectations from forward pricing, per cent
 
 scb:
   # PxWebApi 2. API data is CC0 (SCB recommends "Source: Statistics Sweden"); data from other agencies credit that agency.
