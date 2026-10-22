@@ -50,19 +50,22 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     # silent forecast logging: naive baseline for all three series + KI vintages (only the variables present)
     ledger_path = tmp_path / "ledger.csv"
     today = dt.date(2026, 10, 21)
-    added = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today)
+    added = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today, raw_dir=tmp_path / "no_raw")
     assert added["naive"] == 3 * 12 and added["ki"] > 0
     led = read_ledger(ledger_path)
     naive = [r for r in led if r["model"] == "naive" and r["series"] == "policy_rate"]
     assert [r["target_period"] for r in naive][:2] == ["2026-11", "2026-12"] and naive[0]["made_at"] == "2026-10-01"
     assert {r["series"] for r in led if r["model"] == "ki"} == {"gov_bond_10y"}
-    again = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today)  # same month: nothing new, no error
-    assert again == {"naive": 0, "ki": 0}
+    again = run_ledger.run(db_path=db, ledger_path=ledger_path, today=today, raw_dir=tmp_path / "no_raw")  # same month: nothing new, no error
+    assert again == {"naive": 0, "ki": 0, "riksbank": 0}
 
     out = tmp_path / "site"
     now = dt.datetime(2026, 10, 15, tzinfo=dt.timezone.utc)
     export(out, db_path=db, i18n_path=str(ROOT / "config" / "i18n.yml"),
-           archive_dir=tmp_path / "archive", now=now)
+           archive_dir=tmp_path / "archive", now=now,
+           conventions_path=str(ROOT / "forecasts" / "conventions.yml"))
+    conv = json.loads((out / "v1" / "forecast_conventions.json").read_text())
+    assert set(conv["models"]) >= {"naive", "ki", "riksbank", "market_forward"} and conv["global"]["horizon"]["note"]["sv"]
     data = json.loads((out / "v1" / "rates_monthly.json").read_text())
     assert {s["id"] for s in data["series"]} == {"policy_rate", "tbill_3m", "gov_bond_10y", "spread_10y_policy"}
     assert data["series"][0]["label"]["sv"] == "Styrränta"

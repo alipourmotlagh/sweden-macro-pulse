@@ -26,6 +26,8 @@ riksbank_mpd:
   # the series ids are known (first run lands forecasts/series_ids and forecasts/policy_rounds). Same key as SWEA.
   base_url: https://api.riksbank.se/monetary_policy_data/v1
   status: verify
+  # 2020:2 has no forecast: the Riksbank gave two scenarios (stated in the series notes). Known gap, not an error.
+  known_gaps: ["2020:2"]
   # Chosen from the landed series_ids (2026-10-22). Policy rate is a QUARTERLY mean; the CPIF/CPI series are annual % change.
   series:
     - SEQRATENAYNA     # policy rate, quarterly mean values, per cent

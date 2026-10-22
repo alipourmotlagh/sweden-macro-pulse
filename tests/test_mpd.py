@@ -63,3 +63,9 @@ def test_failure_is_a_visible_warning_not_a_crash(tmp_path):
 
 def test_empty_config_is_a_noop(tmp_path):
     assert riksbank_mpd.ingest({}, raw_dir=tmp_path) == []
+
+
+def test_known_gap_round_is_not_requested_and_not_warned(tmp_path):
+    s, logs = FakeMpdSession(), []
+    run(tmp_path, s, cfg={**CFG, "known_gaps": ["2024:1"]}, logs=logs)
+    assert not any("policy_round_name=2024:1&" in c[0] for c in s.calls) and not [m for m in logs if m.startswith("::warning::")]

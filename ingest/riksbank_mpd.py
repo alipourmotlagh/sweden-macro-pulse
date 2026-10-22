@@ -77,7 +77,8 @@ def ingest(cfg: dict, raw_dir: Path | None = None, session: requests.Session | N
         log(f"::warning::riksbank_mpd: could not list series/rounds ({exc}); source skipped")
         return landed
 
-    rounds = sorted(rounds)          # labels like '2024:1' sort chronologically
+    gaps = set(cfg.get("known_gaps", []))      # rounds the Riksbank published without a single forecast (e.g. 2020:2)
+    rounds = sorted(r for r in rounds if r not in gaps)   # labels like '2024:1' sort chronologically
     if not rounds or not series_wanted:
         return landed
     newest = rounds[-1]

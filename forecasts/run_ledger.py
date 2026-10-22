@@ -1,8 +1,9 @@
 """Write this run's forecasts to the append-only ledger (silent logging, month 1).
 
-Two sources go in, with the same columns:
+Sources that go in, with the same columns:
   * model "naive": random-walk baseline made from our own monthly averages (one forecast set per calendar month)
   * model "ki":    every Konjunkturinstitutet release (vintage), forecast months only
+  * models "riksbank" / "market_forward": every Riksbank policy round (raw snapshots), forecast periods only
 
 Run after `dbt build` (reads the mart tables from DuckDB):  python -m forecasts.run_ledger
 """
@@ -14,6 +15,7 @@ from pathlib import Path
 
 import duckdb
 
+from . import riksbank_ledger
 from .ki_ledger import load_from_duckdb
 from .ledger import append_rows, naive_forecast
 
@@ -49,14 +51,16 @@ def naive_rows(con, series: str, today: dt.date) -> list[dict]:
                           target_periods=targets, data_vintage=rows[-1][0].isoformat())
 
 
-def run(db_path: Path = DB_PATH, ledger_path: Path = LEDGER_PATH, today: dt.date | None = None) -> dict:
+def run(db_path: Path = DB_PATH, ledger_path: Path = LEDGER_PATH, today: dt.date | None = None,
+        raw_dir: Path | None = None) -> dict:
     today = today or dt.datetime.now(dt.timezone.utc).date()
     con = duckdb.connect(str(db_path), read_only=True)
-    added = {"naive": 0, "ki": 0}
+    added = {"naive": 0, "ki": 0, "riksbank": 0}
     for series, ki_variable in SERIES.items():
         added["naive"] += append_rows(ledger_path, naive_rows(con, series, today))
         added["ki"] += append_rows(ledger_path, load_from_duckdb(con, ki_variable, series))
     con.close()
+    added["riksbank"] = append_rows(ledger_path, riksbank_ledger.load_rows(raw_dir))
     return added
 
 

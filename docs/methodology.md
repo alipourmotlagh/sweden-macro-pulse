@@ -20,3 +20,4 @@
 - Backtests are labelled indicative (data revisions, possible leakage). Forecasts are experimental, not advice.
 - KI's published forecasts (every release since 2015) enter the ledger as model `ki`, labelled as KI's own forecasts.
 - Model licences are tracked in `forecasts/model_register.yml`.
+- The Riksbank's own forecasts (policy rounds since 2015) enter as model `riksbank`; the market-implied policy rate as `market_forward`. How horizons, quarterly series and information dates are defined, and what users must be told, is in `docs/forecast_conventions.md` (source: `forecasts/conventions.yml`, published as `v1/forecast_conventions.json`).

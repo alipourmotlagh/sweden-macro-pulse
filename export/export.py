@@ -83,8 +83,15 @@ def write_csv(payload: dict, path: Path) -> None:
             w.writerow([m] + [lookup[s["id"]].get(m, "") for s in payload["series"]])
 
 
+def build_conventions_payload(path: Path, i18n: dict, generated_at: str) -> dict:
+    """How to read the forecasts (en + sv). Shown by the site wherever forecasts or scores appear."""
+    body = yaml.safe_load(path.read_text())
+    return {"meta": {"schema_version": "1.0", "generated_at": generated_at, "disclaimer": i18n["disclaimer"]}, **body}
+
+
 def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml",
-           archive_dir: Path = Path("published/archive"), now: dt.datetime | None = None) -> list[Path]:
+           archive_dir: Path = Path("published/archive"), now: dt.datetime | None = None,
+           conventions_path: str = "forecasts/conventions.yml") -> list[Path]:
     now = now or dt.datetime.now(dt.timezone.utc)
     generated_at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     i18n = yaml.safe_load(Path(i18n_path).read_text())
@@ -94,6 +101,7 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     cpif = build_long_payload(con, "mart_cpif_monthly", i18n, generated_at, attribution_key="scb")
     catalogue = build_catalogue(con, generated_at)
     con.close()
+    conventions = build_conventions_payload(Path(conventions_path), i18n, generated_at)
 
     v1 = out / "v1"
     v1.mkdir(parents=True, exist_ok=True)
@@ -105,7 +113,9 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
         write_csv(payload, v1 / f"{name}.csv")
         written += [v1 / f"{name}.json", v1 / f"{name}.csv"]
     (v1 / "catalogue.json").write_text(json.dumps(catalogue, ensure_ascii=False, indent=1))
-    written += [v1 / "rates_monthly.json", v1 / "rates_monthly.csv", v1 / "catalogue.json"]
+    (v1 / "forecast_conventions.json").write_text(json.dumps(conventions, ensure_ascii=False, indent=1))
+    written += [v1 / "rates_monthly.json", v1 / "rates_monthly.csv", v1 / "catalogue.json",
+                v1 / "forecast_conventions.json"]
 
     # Monthly "as published" archive: created once per calendar month, never overwritten.
     month_dir = archive_dir / now.strftime("%Y-%m")

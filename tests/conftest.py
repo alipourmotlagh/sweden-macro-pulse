@@ -143,3 +143,20 @@ class FakeMpdSession:
             return FakeResp({}, 404)
         return FakeResp({"data": [{"external_id": sid, "vintages": [
             {"metadata": {"policy_round": rnd.replace("%3A", ":")}, "observations": [{"dt": "2025-03-31", "value": 1.5}]}]}]})
+
+
+def mpd_round_snapshot(round_name="2026:3", cutoff_month="2026-08-31", end="2026-09-24", cutoff_q="2026-06-30"):
+    """Synthetic landed round (shape of the real API: vintages is an object; history then forecast)."""
+    def resp(sid, obs, cutoff):
+        return {"data": [{"external_id": sid, "metadata": {"unit": "x"},
+                          "vintages": {"metadata": {"forecast_cutoff_date": cutoff, "policy_round": round_name,
+                                                    "policy_round_end_dtm": end},
+                                       "observations": [{"dt": d, "value": v} for d, v in obs]}}]}
+    monthly = [("2026-07-31", 0.7), ("2026-08-31", 0.7), ("2026-09-30", 1.5), ("2026-10-31", 1.65), ("2027-09-30", 2.0)]
+    quarterly = [("2026-03-31", 1.75), ("2026-06-30", 1.75), ("2026-09-30", 1.7), ("2026-12-31", 1.65)]
+    return {"policy_round_name": round_name, "responses": {
+        "SEMCPIFNAYNA": resp("SEMCPIFNAYNA", monthly, cutoff_month),
+        "SEMCPINAYNA": resp("SEMCPINAYNA", monthly, cutoff_month),
+        "SEQRATENAYNA": resp("SEQRATENAYNA", quarterly, cutoff_q),
+        "SEDMENAYNA": resp("SEDMENAYNA", quarterly, cutoff_q),
+        "SEQGDPNAASA": resp("SEQGDPNAASA", monthly, cutoff_month)}}      # not mapped: must be ignored

@@ -1,0 +1,109 @@
+# How to read the forecasts in forecasts/ledger.csv. SINGLE SOURCE OF TRUTH:
+#  * published as v1/forecast_conventions.json so the site can show the notes next to any forecast or score;
+#  * checked by tests/test_conventions.py: every model and series in the ledger MUST have an entry here with en + sv text,
+#    so a new model or series cannot be logged without documenting how to interpret it.
+# `note` is user-facing text (plain, short). Other fields are for maintainers.
+
+global:
+  horizon:
+    definition: >
+      Horizon = whole months from the month the forecast was published (made_at) to the target period.
+      0 = the publication month itself (a nowcast, partly known). Negative = a month that was already over but not yet
+      published when the forecast came out. The same rule is used for every model.
+    note:
+      en: "Horizon is counted in months from the month the forecast was published. Horizon 0 is the publication month itself and is partly known, so it is shown separately and left out of headline accuracy."
+      sv: "Horisonten räknas i månader från publiceringsmånaden. Horisont 0 är publiceringsmånaden själv och delvis känd, så den visas separat och ingår inte i den samlade träffsäkerheten."
+  scoring:
+    definition: >
+      Headline accuracy uses horizon >= 1 only. Horizon 0 and negative horizons are reported separately.
+      Sample size is always shown. Outcomes: CPIF and CPI from SCB; interest rates from the Riksbank (daily data averaged).
+    note:
+      en: "Accuracy is measured against the published outcome. Sample sizes are small for long horizons, so treat differences between models as indicative, not conclusive. Forecasts are experimental and not advice."
+      sv: "Träffsäkerheten mäts mot det publicerade utfallet. Urvalet är litet för långa horisonter, så skillnader mellan modeller är vägledande, inte slutgiltiga. Prognoserna är experimentella och inte rådgivning."
+  attribution:
+    note:
+      en: "Forecasts by the Riksbank and the National Institute of Economic Research (KI) are their own, reproduced unchanged. All other forecasts and all scores are our own calculations."
+      sv: "Prognoserna från Riksbanken och Konjunkturinstitutet (KI) är deras egna och återges oförändrade. Alla övriga prognoser och alla träffsäkerhetsmått är våra egna beräkningar."
+
+models:
+  naive:
+    label: {en: "Naive baseline", sv: "Naiv jämförelse"}
+    definition: >
+      Random walk: the last complete month's value carried forward 1-12 months, band from historical h-step changes.
+      One forecast set per calendar month (made_at = first day of the run month).
+    note:
+      en: "A deliberately simple benchmark: it assumes the latest known value stays unchanged. A forecast has to beat this to be worth anything."
+      sv: "En medvetet enkel jämförelse: den antar att senaste kända värdet ligger kvar. En prognos måste slå denna för att vara värd något."
+  ki:
+    label: {en: "National Institute of Economic Research (KI)", sv: "Konjunkturinstitutet (KI)"}
+    definition: >
+      Every KI release since 2015-12 (43 releases to 2026-06). model_version 'konjunkturlaget'. Months before the release
+      month equal outcomes and are not logged; the release month is horizon 0. data_vintage = release date.
+      KI forecasts are monthly averages. Interest rates only so far.
+    note:
+      en: "KI's own published forecast, from its quarterly releases. Values for the release month itself are already a forecast (horizon 0)."
+      sv: "KI:s egen publicerade prognos från de kvartalsvisa publiceringarna. Värdet för själva publiceringsmånaden är redan en prognos (horisont 0)."
+  riksbank:
+    label: {en: "The Riksbank", sv: "Riksbanken"}
+    definition: >
+      Riksbank policy rounds 2015:1 to latest (2020:2 has no single forecast and is a known gap). model_version = policy
+      round, made_at = round publication date (policy_round_end_dtm), data_vintage = forecast_cutoff_date (last month of
+      actual data, often 1-2 months before publication). Horizon is counted from the publication month, so it can be
+      negative. Only observations after the cutoff are logged.
+    note:
+      en: "The Riksbank's own forecast from its monetary policy rounds. It is based on data up to a cut-off date that can be a month or two before publication, so the first forecast month can already be in the past when it is published."
+      sv: "Riksbankens egen prognos från penningpolitiska besluten. Den bygger på data fram till ett stoppdatum som kan ligga en eller två månader före publiceringen, så första prognosmånaden kan redan vara passerad när den publiceras."
+  market_forward:
+    label: {en: "Market expectation (forward rates)", sv: "Marknadens förväntan (terminsräntor)"}
+    definition: >
+      Policy rate path implied by forward pricing, published by the Riksbank with each round (series SEDMENAYNA).
+      This is market pricing, not a forecast by the Riksbank. Quarterly means.
+    note:
+      en: "What financial markets expected the policy rate to be, derived from forward interest rates and published by the Riksbank. It is not a Riksbank forecast."
+      sv: "Vad finansmarknaden förväntade sig om styrräntan, härlett ur terminsräntor och publicerat av Riksbanken. Det är inte en prognos från Riksbanken."
+
+series:
+  policy_rate:
+    frequency: monthly
+    label: {en: "Policy rate (monthly average)", sv: "Styrränta (månadsmedel)"}
+    note:
+      en: "Monthly average of the daily policy rate."
+      sv: "Månadsmedel av den dagliga styrräntan."
+  tbill_3m:
+    frequency: monthly
+    label: {en: "Treasury bill yield, 3 months (monthly average)", sv: "Statsskuldväxelränta, 3 månader (månadsmedel)"}
+    note:
+      en: "Monthly average of the daily 3-month Treasury bill yield. Used instead of STIBOR, which is no longer published by the Riksbank."
+      sv: "Månadsmedel av den dagliga statsskuldväxelräntan, 3 månader. Används i stället för STIBOR, som Riksbanken inte längre publicerar."
+  gov_bond_10y:
+    frequency: monthly
+    label: {en: "10-year government bond yield (monthly average)", sv: "Statsobligationsränta, 10 år (månadsmedel)"}
+    note:
+      en: "Monthly average of the daily 10-year government bond yield."
+      sv: "Månadsmedel av den dagliga statsobligationsräntan, 10 år."
+  cpif_annual:
+    frequency: monthly
+    label: {en: "CPIF inflation, annual change", sv: "KPIF-inflation, årlig förändring"}
+    note:
+      en: "CPIF is the inflation measure the Riksbank targets (CPI with a fixed mortgage interest rate). Annual change in per cent, from Statistics Sweden."
+      sv: "KPIF är det inflationsmått Riksbanken siktar på (KPI med fast bostadsränta). Årlig förändring i procent, från SCB."
+  cpi_annual:
+    frequency: monthly
+    label: {en: "CPI inflation, annual change", sv: "KPI-inflation, årlig förändring"}
+    note:
+      en: "CPI includes the effect of changing mortgage interest rates, so it moves more than CPIF when the policy rate changes."
+      sv: "KPI inkluderar effekten av ändrade bolåneräntor och rör sig därför mer än KPIF när styrräntan ändras."
+  policy_rate_qmean:
+    frequency: quarterly
+    target_period_meaning: "quarter-end month, e.g. 2026-12 = the mean over Oct-Dec 2026"
+    label: {en: "Policy rate (quarterly mean)", sv: "Styrränta (kvartalsmedel)"}
+    note:
+      en: "The Riksbank forecasts the policy rate as a quarterly mean. The period 2026-12 means the average over October-December 2026, and it is compared with the same quarterly average of the actual rate."
+      sv: "Riksbanken prognostiserar styrräntan som kvartalsmedel. Perioden 2026-12 betyder genomsnittet för oktober-december 2026 och jämförs med motsvarande kvartalsmedel för den faktiska räntan."
+  policy_rate_forward_qmean:
+    frequency: quarterly
+    target_period_meaning: "quarter-end month, as policy_rate_qmean"
+    label: {en: "Policy rate expected by markets (quarterly mean)", sv: "Marknadens förväntade styrränta (kvartalsmedel)"}
+    note:
+      en: "Quarterly mean of the policy rate implied by forward rates at the time of each Riksbank round. Market pricing, not a forecast by the Riksbank."
+      sv: "Kvartalsmedel av den styrränta som terminsräntorna implicerade vid varje penningpolitiskt beslut. Marknadens prissättning, inte en prognos från Riksbanken."
