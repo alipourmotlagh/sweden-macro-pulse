@@ -51,6 +51,23 @@ def naive_rows(con, series: str, today: dt.date) -> list[dict]:
                           target_periods=targets, data_vintage=rows[-1][0].isoformat())
 
 
+def cpif_naive_rows(con, today: dt.date) -> list[dict]:
+    """CPIF baseline made on `today`'s month: the value for two months earlier carried forward 1..12 months.
+
+    CPIF for month M is published around the 10th of M+1, so on the 1st of a month the last PUBLISHED value is M-2.
+    We always use M-2 even if a weekly run later in the month could see M-1: otherwise a re-run would produce different
+    numbers under the same key and the append-only ledger would (rightly) refuse them.
+    """
+    month_start = today.replace(day=1)
+    cutoff = _add_months(month_start, -2)
+    rows = con.execute("select month, value from main.mart_cpif_monthly where month <= ? order by month", [cutoff]).fetchall()
+    if not rows or rows[-1][0] != cutoff:
+        return []                                   # last expected value not there yet: log nothing rather than guess
+    targets = [_add_months(month_start, h).strftime("%Y-%m") for h in range(1, HORIZONS + 1)]
+    return naive_forecast([float(v) for _, v in rows], HORIZONS, series="cpif_annual", made_at=month_start.isoformat(),
+                          target_periods=targets, data_vintage=cutoff.isoformat(), lead=1)
+
+
 def run(db_path: Path = DB_PATH, ledger_path: Path = LEDGER_PATH, today: dt.date | None = None,
         raw_dir: Path | None = None) -> dict:
     today = today or dt.datetime.now(dt.timezone.utc).date()
@@ -59,6 +76,7 @@ def run(db_path: Path = DB_PATH, ledger_path: Path = LEDGER_PATH, today: dt.date
     for series, ki_variable in SERIES.items():
         added["naive"] += append_rows(ledger_path, naive_rows(con, series, today))
         added["ki"] += append_rows(ledger_path, load_from_duckdb(con, ki_variable, series))
+    added["naive"] += append_rows(ledger_path, cpif_naive_rows(con, today))
     con.close()
     added["riksbank"] = append_rows(ledger_path, riksbank_ledger.load_rows(raw_dir))
     return added

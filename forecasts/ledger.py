@@ -52,14 +52,19 @@ def append_rows(path: Path, rows: list[dict]) -> int:
 
 
 def naive_forecast(history: list[float], horizons: int, *, series: str, made_at: str,
-                   target_periods: list[str], data_vintage: str) -> list[dict]:
-    """Random-walk baseline: last value, with empirical 10/90% band from h-step changes in history."""
+                   target_periods: list[str], data_vintage: str, lead: int = 0) -> list[dict]:
+    """Random-walk baseline: last value, with empirical 10/90% band from (h + lead)-step changes in history.
+
+    `lead` = extra months between the last observation and the month before the first target. Default 0 keeps the
+    rate baselines exactly as logged so far (their band is slightly narrow: true distance is h+1; see docs/backlog.md).
+    """
     if len(history) < 12:
         raise LedgerError("need at least 12 observations for a baseline band")
     last = history[-1]
     rows = []
     for h in range(1, horizons + 1):
-        diffs = sorted(history[i + h] - history[i] for i in range(len(history) - h))
+        step = h + lead
+        diffs = sorted(history[i + step] - history[i] for i in range(len(history) - step))
         lo = diffs[int(0.1 * (len(diffs) - 1))]
         hi = diffs[int(0.9 * (len(diffs) - 1))]
         rows.append({"series": series, "model": "naive", "model_version": "1", "made_at": made_at,

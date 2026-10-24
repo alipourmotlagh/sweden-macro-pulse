@@ -20,6 +20,13 @@ global:
     note:
       en: "Accuracy is measured against the published outcome. Sample sizes are small for long horizons, so treat differences between models as indicative, not conclusive. Forecasts are experimental and not advice."
       sv: "Träffsäkerheten mäts mot det publicerade utfallet. Urvalet är litet för långa horisonter, så skillnader mellan modeller är vägledande, inte slutgiltiga. Prognoserna är experimentella och inte rådgivning."
+  skill:
+    definition: >
+      skill = 1 - MAE(model) / MAE(naive_backtest), on exactly the same target months and horizons. Positive = better than
+      the baseline, 0 = equal, negative = worse. n_matched is the number of forecasts it is based on.
+    note:
+      en: "Skill compares a forecast with the simple baseline on exactly the same months: above zero means it did better than assuming nothing changes. Always read it together with the number of forecasts it is based on."
+      sv: "Skill jämför en prognos med den enkla jämförelsen för exakt samma månader: över noll betyder att den var bättre än att anta att inget ändras. Läs den alltid tillsammans med antalet prognoser den bygger på."
   attribution:
     note:
       en: "Forecasts by the Riksbank and the National Institute of Economic Research (KI) are their own, reproduced unchanged. All other forecasts and all scores are our own calculations."
@@ -30,10 +37,21 @@ models:
     label: {en: "Naive baseline", sv: "Naiv jämförelse"}
     definition: >
       Random walk: the last complete month's value carried forward 1-12 months, band from historical h-step changes.
-      One forecast set per calendar month (made_at = first day of the run month).
+      One forecast set per calendar month (made_at = first day of the run month). Rates use the previous month; CPIF uses
+      the value two months earlier (the last published on the 1st), with a band from (h+1)-step changes.
     note:
       en: "A deliberately simple benchmark: it assumes the latest known value stays unchanged. A forecast has to beat this to be worth anything."
       sv: "En medvetet enkel jämförelse: den antar att senaste kända värdet ligger kvar. En prognos måste slå denna för att vara värd något."
+  naive_backtest:
+    label: {en: "Naive baseline (calculated in hindsight)", sv: "Naiv jämförelse (beräknad i efterhand)"}
+    definition: >
+      The same random-walk idea computed AFTER THE FACT for every date on which another model published (horizons 0-12),
+      using only the last value that had been published by then (CPIF: two months before; rates: previous month).
+      Needed because the real-time naive baseline only started in 2026-10. Computed when the scoreboard is built, never
+      written to the ledger. Indicative: outcomes are used as now published (CPIF and rates are not revised).
+    note:
+      en: "A simple benchmark calculated in hindsight: it assumes the latest value that was known on the publication date stays unchanged. Because it is calculated afterwards, it is a backtest and indicative only."
+      sv: "En enkel jämförelse som beräknats i efterhand: den antar att det senaste kända värdet på publiceringsdagen ligger kvar. Eftersom den beräknats i efterhand är det en backtest och endast vägledande."
   ki:
     label: {en: "National Institute of Economic Research (KI)", sv: "Konjunkturinstitutet (KI)"}
     definition: >

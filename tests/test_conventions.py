@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 
 from export.export import build_conventions_payload
-from forecasts import riksbank_ledger, run_ledger
+from forecasts import riksbank_ledger, run_ledger, scoring
 from forecasts.ledger import read_ledger
 
 CONV = Path("forecasts/conventions.yml")
@@ -21,7 +21,7 @@ def has_text(node):
 
 def test_every_possible_model_and_series_is_documented():
     c = conv()
-    models = {"naive", "ki"} | {m for _, m in riksbank_ledger.SERIES_MAP.values()}
+    models = {"naive", "ki", scoring.BACKTEST_MODEL} | {m for _, m in riksbank_ledger.SERIES_MAP.values()}
     series = set(run_ledger.SERIES) | {s for s, _ in riksbank_ledger.SERIES_MAP.values()} | {"cpif_annual"}
     assert models <= set(c["models"]), models - set(c["models"])
     assert series <= set(c["series"]), series - set(c["series"])
@@ -39,7 +39,7 @@ def test_real_ledger_has_no_undocumented_model_or_series():
 
 def test_all_user_facing_text_exists_in_both_languages():
     c = conv()
-    for key in ("horizon", "scoring", "attribution"):
+    for key in ("horizon", "scoring", "skill", "attribution"):
         assert has_text(c["global"][key]["note"]), key
     for kind in ("models", "series"):
         for name, entry in c[kind].items():

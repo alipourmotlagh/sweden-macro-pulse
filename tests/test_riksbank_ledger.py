@@ -57,6 +57,7 @@ def test_run_ledger_reports_riksbank_rows(tmp_path):
     con = duckdb.connect(str(db))
     con.execute("create table mart_rates_monthly(month date, policy_rate double, tbill_3m double, gov_bond_10y double)")
     con.execute("create table mart_ki_rates_vintages(vintage varchar, variable varchar, period date, value double)")
+    con.execute("create table mart_cpif_monthly(series_key varchar, table_id varchar, month date, value double)")
     for m in range(1, 19):
         con.execute("insert into mart_rates_monthly values (?, 1.5, 1.5, 2.5)", [f"{2025 + (m - 1) // 12}-{(m - 1) % 12 + 1:02d}-01"])
     con.close()

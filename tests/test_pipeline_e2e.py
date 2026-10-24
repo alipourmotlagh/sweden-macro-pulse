@@ -63,7 +63,9 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     now = dt.datetime(2026, 10, 15, tzinfo=dt.timezone.utc)
     export(out, db_path=db, i18n_path=str(ROOT / "config" / "i18n.yml"),
            archive_dir=tmp_path / "archive", now=now,
-           conventions_path=str(ROOT / "forecasts" / "conventions.yml"))
+           conventions_path=str(ROOT / "forecasts" / "conventions.yml"), ledger_path=str(ledger_path))
+    board = json.loads((out / "v1" / "scoreboard.json").read_text())
+    assert board["meta"]["ledger_rows"] > 0 and set(board) >= {"meta", "labels", "headline", "other_horizons", "by_horizon"}
     conv = json.loads((out / "v1" / "forecast_conventions.json").read_text())
     assert set(conv["models"]) >= {"naive", "ki", "riksbank", "market_forward"} and conv["global"]["horizon"]["note"]["sv"]
     data = json.loads((out / "v1" / "rates_monthly.json").read_text())

@@ -89,9 +89,29 @@ def build_conventions_payload(path: Path, i18n: dict, generated_at: str) -> dict
     return {"meta": {"schema_version": "1.0", "generated_at": generated_at, "disclaimer": i18n["disclaimer"]}, **body}
 
 
+def build_scoreboard_payload(con, ledger_path: Path, conventions: dict, i18n: dict, generated_at: str,
+                             today: dt.date | None = None) -> dict:
+    """Scores of every logged forecast against published outcomes. See forecasts/conventions.yml for how to read it."""
+    from forecasts.ledger import read_ledger
+    from forecasts.scoring import load_outcomes, score_all
+    ledger = read_ledger(ledger_path)
+    results = score_all(ledger, load_outcomes(con, today)) if ledger else {"headline": [], "other_horizons": [], "by_horizon": []}
+    return {"meta": {"schema_version": "1.0", "generated_at": generated_at, "disclaimer": i18n["disclaimer"],
+                     "conventions": "forecast_conventions.json",
+                     "benchmark": {"en": "naive_backtest = random walk computed in hindsight for every date a model published; "
+                                         "skill > 0 means better than that baseline on the same target months and horizons.",
+                                   "sv": "naive_backtest = slumpvandring beräknad i efterhand för varje datum då en modell publicerade; "
+                                         "skill > 0 betyder bättre än den jämförelsen för samma målmånader och horisonter."},
+                     "ledger_rows": len(ledger)},
+            "labels": {"models": {k: v["label"] for k, v in conventions["models"].items()},
+                       "series": {k: v["label"] for k, v in conventions["series"].items()}},
+            **results}
+
+
 def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml",
            archive_dir: Path = Path("published/archive"), now: dt.datetime | None = None,
-           conventions_path: str = "forecasts/conventions.yml") -> list[Path]:
+           conventions_path: str = "forecasts/conventions.yml",
+           ledger_path: str = "forecasts/ledger.csv") -> list[Path]:
     now = now or dt.datetime.now(dt.timezone.utc)
     generated_at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     i18n = yaml.safe_load(Path(i18n_path).read_text())
@@ -100,8 +120,9 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     mortgage = build_long_payload(con, "mart_mortgage_monthly", i18n, generated_at, attribution_key="scb_riksbank")
     cpif = build_long_payload(con, "mart_cpif_monthly", i18n, generated_at, attribution_key="scb")
     catalogue = build_catalogue(con, generated_at)
-    con.close()
     conventions = build_conventions_payload(Path(conventions_path), i18n, generated_at)
+    scoreboard = build_scoreboard_payload(con, Path(ledger_path), conventions, i18n, generated_at, now.date())
+    con.close()
 
     v1 = out / "v1"
     v1.mkdir(parents=True, exist_ok=True)
@@ -114,8 +135,9 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
         written += [v1 / f"{name}.json", v1 / f"{name}.csv"]
     (v1 / "catalogue.json").write_text(json.dumps(catalogue, ensure_ascii=False, indent=1))
     (v1 / "forecast_conventions.json").write_text(json.dumps(conventions, ensure_ascii=False, indent=1))
+    (v1 / "scoreboard.json").write_text(json.dumps(scoreboard, ensure_ascii=False, indent=1))
     written += [v1 / "rates_monthly.json", v1 / "rates_monthly.csv", v1 / "catalogue.json",
-                v1 / "forecast_conventions.json"]
+                v1 / "forecast_conventions.json", v1 / "scoreboard.json"]
 
     # Monthly "as published" archive: created once per calendar month, never overwritten.
     month_dir = archive_dir / now.strftime("%Y-%m")

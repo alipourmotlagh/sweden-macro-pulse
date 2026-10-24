@@ -27,6 +27,17 @@ It is published as `v1/forecast_conventions.json`. **Any page that shows a forec
    our models, scores) is our own calculation and is labelled so.
 9. **Known gap:** Riksbank round 2020:2 has no single forecast (two scenarios); skipped on purpose.
 
+10. **Benchmark.** `naive_backtest` is a random walk computed in hindsight for every date another model published
+    (horizons 0-12), using only the last value published by then (CPIF: two months before; rates: the previous month).
+    It exists because the real-time `naive` baseline only started in 2026-10. It is computed when the scoreboard is built
+    and is never written to the ledger (the ledger holds only forecasts made in real time). It is a backtest, so
+    it is always labelled indicative.
+11. **Skill** = 1 - MAE(model) / MAE(naive_backtest) on the same target months and horizons; always shown with n.
+12. **Outcomes** for rates use *complete* months only; a quarter needs all three months. CPI (not CPIF) has no outcome
+    source yet, so `cpi_annual` forecasts are logged but not scored (see backlog).
+13. **Real-time CPIF baseline** uses the value two months before the run month, never a later one, so weekly re-runs in
+    the same month produce identical rows (the ledger refuses changed rows under the same key).
+
 ## Checks done on real data (2026-10-22)
 - Riksbank round files: observations up to `forecast_cutoff_date` match SCB's CPIF to rounding (2 vs 1 decimal);
   observations after it are forecasts (e.g. round 2022:1 forecast March 2022 CPIF at 3.84%; the outcome was 6.1%).
