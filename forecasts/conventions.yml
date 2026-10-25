@@ -27,6 +27,35 @@ global:
     note:
       en: "Skill compares a forecast with the simple baseline on exactly the same months: above zero means it did better than assuming nothing changes. Always read it together with the number of forecasts it is based on."
       sv: "Skill jämför en prognos med den enkla jämförelsen för exakt samma månader: över noll betyder att den var bättre än att anta att inget ändras. Läs den alltid tillsammans med antalet prognoser den bygger på."
+  eras:
+    definition: >
+      Results are also split by TARGET month into eras fixed in advance: before 2021, 2021-2023 (the inflation surge),
+      2024 onward, and everything except 2021-2023. They must not be changed after looking at results (that would be
+      cherry-picking). The number of distinct rounds/releases is shown in every row, because forecasts from one round
+      overlap heavily and the rounds are the honest sample size.
+    note:
+      en: "Results are split into fixed periods by the month being forecast, so you can see whether one episode, such as the 2021-2023 inflation surge, drives the average. The number of rounds matters more than the number of forecasts, because forecasts from the same round overlap."
+      sv: "Resultaten delas upp i fasta perioder efter vilken månad som prognostiseras, så att man kan se om ett enskilt skeende, som inflationsuppgången 2021-2023, styr genomsnittet. Antalet beslutsomgångar betyder mer än antalet prognoser, eftersom prognoser från samma omgång överlappar."
+    items:
+      before_2021: {label: {en: "Before 2021", sv: "Före 2021"}}
+      surge_2021_2023: {label: {en: "2021 to 2023 (inflation surge)", sv: "2021 till 2023 (inflationsuppgången)"}}
+      from_2024: {label: {en: "2024 onward", sv: "2024 och framåt"}}
+      excl_surge_2021_2023: {label: {en: "All periods except 2021 to 2023", sv: "Alla perioder utom 2021 till 2023"}}
+  uncertainty:
+    definition: >
+      skill_ci90 = 90% interval for skill from a bootstrap that resamples whole rounds/releases (not single forecasts),
+      2000 draws, fixed seed. Not shown when fewer than 8 rounds/releases are behind a row.
+    note:
+      en: "The interval shows how much the skill figure could vary if a different set of policy rounds had been drawn. It counts rounds, not individual forecasts, so it is wider, and more honest, than the sample size suggests."
+      sv: "Intervallet visar hur mycket skill-värdet kunde variera om ett annat urval av beslutsomgångar hade dragits. Det räknar omgångar, inte enskilda prognoser, och är därför bredare, och ärligare, än urvalets storlek antyder."
+  rounds:
+    definition: >
+      cpif_forecast_rounds.json: one entry per Riksbank round with publication date, data cutoff, summary of horizons 1-12
+      against outcomes and the forecast path for horizons -1..12 (outcome null while not yet published). Round 2020:2 is a
+      known gap (two scenarios).
+    note:
+      en: "Each line is one Riksbank policy round: what it forecast for the following months, set against what actually happened. Months not yet published show no outcome."
+      sv: "Varje rad är en penningpolitisk omgång: vad Riksbanken prognostiserade för de följande månaderna, jämfört med vad som faktiskt hände. Månader som ännu inte publicerats saknar utfall."
   attribution:
     note:
       en: "Forecasts by the Riksbank and the National Institute of Economic Research (KI) are their own, reproduced unchanged. All other forecasts and all scores are our own calculations."
@@ -46,12 +75,15 @@ models:
     label: {en: "Naive baseline (calculated in hindsight)", sv: "Naiv jämförelse (beräknad i efterhand)"}
     definition: >
       The same random-walk idea computed AFTER THE FACT for every date on which another model published (horizons 0-12),
-      using only the last value that had been published by then (CPIF: two months before; rates: previous month).
+      version backtest-2. It gets the same information date as the forecast it is compared with: for Riksbank CPIF the
+      value for the round's own data cutoff month; otherwise the last value published/complete by the publication month
+      (CPIF two months before, rates the previous month). Version backtest-1 always used the value two months back and
+      flattered the Riksbank (skill 0.37 became 0.29 with the fairer benchmark).
       Needed because the real-time naive baseline only started in 2026-10. Computed when the scoreboard is built, never
       written to the ledger. Indicative: outcomes are used as now published (CPIF and rates are not revised).
     note:
-      en: "A simple benchmark calculated in hindsight: it assumes the latest value that was known on the publication date stays unchanged. Because it is calculated afterwards, it is a backtest and indicative only."
-      sv: "En enkel jämförelse som beräknats i efterhand: den antar att det senaste kända värdet på publiceringsdagen ligger kvar. Eftersom den beräknats i efterhand är det en backtest och endast vägledande."
+      en: "A simple benchmark calculated in hindsight: it assumes the latest value that the forecaster could see stays unchanged. Because it is calculated afterwards, it is a backtest and indicative only."
+      sv: "En enkel jämförelse som beräknats i efterhand: den antar att det senaste värdet som prognosmakaren kunde se ligger kvar. Eftersom den beräknats i efterhand är det en backtest och endast vägledande."
   ki:
     label: {en: "National Institute of Economic Research (KI)", sv: "Konjunkturinstitutet (KI)"}
     definition: >

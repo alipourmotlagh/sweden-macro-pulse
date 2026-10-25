@@ -95,17 +95,44 @@ def build_scoreboard_payload(con, ledger_path: Path, conventions: dict, i18n: di
     from forecasts.ledger import read_ledger
     from forecasts.scoring import load_outcomes, score_all
     ledger = read_ledger(ledger_path)
-    results = score_all(ledger, load_outcomes(con, today)) if ledger else {"headline": [], "other_horizons": [], "by_horizon": []}
-    return {"meta": {"schema_version": "1.0", "generated_at": generated_at, "disclaimer": i18n["disclaimer"],
+    results = (score_all(ledger, load_outcomes(con, today)) if ledger
+               else {"headline": [], "other_horizons": [], "by_horizon": [], "by_era": []})
+    return {"meta": {"schema_version": "1.1", "generated_at": generated_at, "disclaimer": i18n["disclaimer"],
                      "conventions": "forecast_conventions.json",
-                     "benchmark": {"en": "naive_backtest = random walk computed in hindsight for every date a model published; "
-                                         "skill > 0 means better than that baseline on the same target months and horizons.",
-                                   "sv": "naive_backtest = slumpvandring beräknad i efterhand för varje datum då en modell publicerade; "
-                                         "skill > 0 betyder bättre än den jämförelsen för samma målmånader och horisonter."},
+                     "benchmark": {"en": "naive_backtest (version backtest-2) = random walk computed in hindsight, given the same "
+                                         "information date as the forecast it is compared with; skill > 0 means better than that "
+                                         "baseline on the same target months and horizons. skill_ci90 = 90% interval from a "
+                                         "bootstrap over whole rounds/releases.",
+                                   "sv": "naive_backtest (version backtest-2) = slumpvandring beräknad i efterhand med samma "
+                                         "informationsdatum som prognosen den jämförs med; skill > 0 betyder bättre än den "
+                                         "jämförelsen för samma målmånader och horisonter. skill_ci90 = 90-procentigt intervall "
+                                         "från en bootstrap över hela beslutsomgångar/publiceringar."},
                      "ledger_rows": len(ledger)},
-            "labels": {"models": {k: v["label"] for k, v in conventions["models"].items()},
+            "labels": {"eras": {k: v["label"] for k, v in conventions["global"]["eras"]["items"].items()},
+                       "models": {k: v["label"] for k, v in conventions["models"].items()},
                        "series": {k: v["label"] for k, v in conventions["series"].items()}},
             **results}
+
+
+def build_cpif_rounds_payload(con, ledger_path: Path, conventions: dict, i18n: dict, generated_at: str,
+                              today: dt.date | None = None) -> dict:
+    """Riksbank CPIF forecast per round: summary of horizons 1-12 and the forecast path against SCB outcomes."""
+    from forecasts.ledger import read_ledger
+    from forecasts.scoring import ROUND_MAX_HORIZON, ROUND_POINT_FIELDS, load_outcomes, rounds_view
+    ledger = read_ledger(ledger_path)
+    rounds = rounds_view(ledger, load_outcomes(con, today)) if ledger else []
+    return {"meta": {"schema_version": "1.0", "generated_at": generated_at, "disclaimer": i18n["disclaimer"],
+                     "attribution": i18n["attribution"]["forecasts_cpif"], "conventions": "forecast_conventions.json",
+                     "series": "cpif_annual", "model": "riksbank", "path_horizons": [-1, ROUND_MAX_HORIZON],
+                     "point_fields": ROUND_POINT_FIELDS,
+                     "point_fields_note": {"en": "Each point is [target month, horizon, forecast, outcome (null if not yet published), "
+                                                 "benchmark]. Benchmark = naive_backtest given the round's own data cutoff.",
+                                           "sv": "Varje punkt är [målmånad, horisont, prognos, utfall (null om det inte publicerats), "
+                                                 "jämförelse]. Jämförelse = naive_backtest med rundans eget datastopp."},
+                     "known_gaps": [{"round": "2020:2",
+                                     "reason": {"en": "No single forecast: the Riksbank published two scenarios.",
+                                                "sv": "Ingen enskild prognos: Riksbanken publicerade två scenarier."}}]},
+            "rounds": rounds}
 
 
 def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml",
@@ -122,6 +149,7 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     catalogue = build_catalogue(con, generated_at)
     conventions = build_conventions_payload(Path(conventions_path), i18n, generated_at)
     scoreboard = build_scoreboard_payload(con, Path(ledger_path), conventions, i18n, generated_at, now.date())
+    cpif_rounds = build_cpif_rounds_payload(con, Path(ledger_path), conventions, i18n, generated_at, now.date())
     con.close()
 
     v1 = out / "v1"
@@ -136,8 +164,10 @@ def export(out: Path, db_path: Path = DB_PATH, i18n_path: str = "config/i18n.yml
     (v1 / "catalogue.json").write_text(json.dumps(catalogue, ensure_ascii=False, indent=1))
     (v1 / "forecast_conventions.json").write_text(json.dumps(conventions, ensure_ascii=False, indent=1))
     (v1 / "scoreboard.json").write_text(json.dumps(scoreboard, ensure_ascii=False, indent=1))
+    # compact: ~800 forecast points, so no indentation inside the point arrays
+    (v1 / "cpif_forecast_rounds.json").write_text(json.dumps(cpif_rounds, ensure_ascii=False, separators=(",", ":")))
     written += [v1 / "rates_monthly.json", v1 / "rates_monthly.csv", v1 / "catalogue.json",
-                v1 / "forecast_conventions.json", v1 / "scoreboard.json"]
+                v1 / "forecast_conventions.json", v1 / "scoreboard.json", v1 / "cpif_forecast_rounds.json"]
 
     # Monthly "as published" archive: created once per calendar month, never overwritten.
     month_dir = archive_dir / now.strftime("%Y-%m")

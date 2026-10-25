@@ -6,11 +6,14 @@ Status: [ ] open, [x] done. Keep one line per item with the reason.
 ## Forecasts and scoring
 - [ ] KI inflation forecasts (CPIF) as a second professional comparator: KI has them in another PxWeb table; currently only the Riksbank forecasts CPIF in the ledger.
 - [ ] Outcome source for CPI (not CPIF) so `cpi_annual` can be scored: add an SCB CPI table.
+- [x] Done 2026-10-25: scores split by era, benchmark given the forecast's own information date (backtest-2), bootstrap interval, per-round file.
 - [ ] Rate baseline band: `naive` rate rows use h-step changes but the true distance is h+1 (last value is the previous month). CPIF already uses lead=1. Fix with a new model_version from a new month; never edit logged rows.
 - [ ] Scoring covers horizons up to 12; the Riksbank CPIF goes to 38. Add longer horizons with their own sample sizes.
 - [ ] Quarterly benchmark for `policy_rate_qmean` (no skill score today); KI monthly rate forecasts averaged into quarters for comparison.
 - [ ] Quarterly mean of the policy rate is the mean of three monthly averages, the Riksbank may average daily values. Check the size of the difference.
 - [ ] Models for month 2+: ETS/ARIMA, TimesFM 2.5, Chronos-2 (licences in `forecasts/model_register.yml`); TiRex-2 licence unverified.
+- [ ] Check benchmark fairness for the KI interest-rate series too: backtest-2 still uses the previous month for KI (KI publishes mid-month). Matters most for the 10-year yield (KI skill was -0.05).
+- [ ] Show the real-time baseline in the scoreboard once its first target months have outcomes (from November 2026).
 - [ ] Interval coverage for models other than the real-time naive (Riksbank and KI publish no intervals in our data).
 - [ ] Investigate the small KI outcome deviations in 2019-06 and 2019-10 (~0.15); first two KI releases lack the policy rate.
 - [ ] Riksbank series not used yet (GDP, unemployment, wages, KIX, ...) are already in the raw data; add if a pack needs them.

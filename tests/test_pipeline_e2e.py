@@ -65,7 +65,10 @@ def test_end_to_end(tmp_path, riksbank_payloads):
            archive_dir=tmp_path / "archive", now=now,
            conventions_path=str(ROOT / "forecasts" / "conventions.yml"), ledger_path=str(ledger_path))
     board = json.loads((out / "v1" / "scoreboard.json").read_text())
-    assert board["meta"]["ledger_rows"] > 0 and set(board) >= {"meta", "labels", "headline", "other_horizons", "by_horizon"}
+    assert board["meta"]["ledger_rows"] > 0 and set(board) >= {"meta", "labels", "headline", "other_horizons", "by_horizon", "by_era"}
+    assert board["meta"]["schema_version"] == "1.1" and set(board["labels"]["eras"]) == {"before_2021", "surge_2021_2023", "from_2024", "excl_surge_2021_2023"}
+    rounds = json.loads((out / "v1" / "cpif_forecast_rounds.json").read_text())
+    assert rounds["meta"]["known_gaps"][0]["round"] == "2020:2" and "rounds" in rounds
     conv = json.loads((out / "v1" / "forecast_conventions.json").read_text())
     assert set(conv["models"]) >= {"naive", "ki", "riksbank", "market_forward"} and conv["global"]["horizon"]["note"]["sv"]
     data = json.loads((out / "v1" / "rates_monthly.json").read_text())

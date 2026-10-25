@@ -39,7 +39,7 @@ def test_real_ledger_has_no_undocumented_model_or_series():
 
 def test_all_user_facing_text_exists_in_both_languages():
     c = conv()
-    for key in ("horizon", "scoring", "skill", "attribution"):
+    for key in ("horizon", "scoring", "skill", "eras", "uncertainty", "rounds", "attribution"):
         assert has_text(c["global"][key]["note"]), key
     for kind in ("models", "series"):
         for name, entry in c[kind].items():
@@ -52,3 +52,20 @@ def test_payload_is_publishable_json():
     payload = build_conventions_payload(CONV, i18n, "2026-10-22T00:00:00Z")
     assert payload["meta"]["schema_version"] == "1.0" and "disclaimer" in payload["meta"]
     json.dumps(payload, ensure_ascii=False)
+
+
+def test_eras_in_code_and_conventions_agree():
+    c = conv()
+    ids = [era_id for era_id, _ in scoring.ERAS]
+    assert list(c["global"]["eras"]["items"]) == ids
+    assert all(has_text(item["label"]) for item in c["global"]["eras"]["items"].values())
+
+
+def test_all_yaml_keys_are_strings():
+    """YAML reads a bare key like 2021_2023 as the NUMBER 20212023; ids must stay strings."""
+    def walk(node, path=""):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                assert isinstance(k, str), f"non-string key {k!r} at {path}"
+                walk(v, f"{path}/{k}")
+    walk(conv())

@@ -22,11 +22,11 @@ def row(series, model, made_at, target, horizon, point):
 
 def test_backtest_uses_only_values_published_by_then():
     o = outcomes_cpif()
-    rows = scoring.backtest_rows(o, {"cpif_annual": {"2025-03-12"}})
+    rows = scoring.backtest_rows(o, {"cpif_annual": {("2025-03-12", "2025-01")}})
     r0 = [r for r in rows if r["horizon"] == 0][0]
     assert r0["target_period"] == "2025-03" and r0["point"] == o[("cpif_annual", "2025-01")]   # made in March -> last = January
     assert {r["horizon"] for r in rows} == set(range(0, 13)) and all(r["model"] == "naive_backtest" for r in rows)
-    assert scoring.backtest_rows(o, {"cpif_annual": {"2010-03-12"}}) == []                      # no outcome yet -> no baseline
+    assert scoring.backtest_rows(o, {"cpif_annual": {("2010-03-12", "2010-01")}}) == []                      # no outcome yet -> no baseline
 
 
 def test_headline_excludes_h0_and_negative_and_reports_n_and_skill():

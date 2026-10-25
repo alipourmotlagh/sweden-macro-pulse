@@ -59,6 +59,9 @@ attribution:
   scb_riksbank:
     en: "Source: Sveriges riksbank (published via Statistics Sweden)."
     sv: "Källa: Sveriges riksbank (via Statistiska centralbyrån)."
+  forecasts_cpif:
+    en: "Forecasts: Sveriges riksbank, reproduced unchanged. Outcomes: Statistics Sweden. Benchmark and scores: own calculations."
+    sv: "Prognoser: Sveriges riksbank, återgivna oförändrade. Utfall: Statistiska centralbyrån. Jämförelse och träffsäkerhet: egna beräkningar."
 disclaimer:
   en: "Illustration of public data, not financial advice."
   sv: "Illustration av offentliga data, inte finansiell rådgivning."
