@@ -6,9 +6,10 @@ Rules (documented in forecasts/conventions.yml and docs/forecast_conventions.md;
     n counts forecasts, but forecasts from one round overlap heavily, so the number of rounds is the honest sample size.
   * Outcomes: CPIF from SCB; interest rates = our monthly averages of the Riksbank's daily data, COMPLETE months only;
     quarterly series = mean of the three monthly averages (all three must exist).
-  * Benchmark `naive_backtest` (version backtest-2) is a random walk computed here in hindsight, never written to the
+  * Benchmark `naive_backtest` (version backtest-3) is a random walk computed here in hindsight, never written to the
     ledger. It gets the SAME information date as the forecast it is compared with:
       - Riksbank CPIF: the value for the round's own data cutoff month (the round saw that month, so must the benchmark);
+      - KI interest rates: the last DAILY value strictly before the day KI published (KI knew the rate that day);
       - everything else: the last month that is complete/published by the publication month (INFO_LAG).
     (backtest-1 always used the value two months back and flattered the Riksbank: skill 0.37 became 0.29.)
   * skill = 1 - MAE(model) / MAE(benchmark) on the SAME target months and horizons. Its uncertainty is a bootstrap that
@@ -17,6 +18,7 @@ Rules (documented in forecasts/conventions.yml and docs/forecast_conventions.md;
 """
 from __future__ import annotations
 
+import bisect
 import datetime as dt
 import math
 import random
@@ -25,9 +27,11 @@ import statistics
 HEADLINE = range(1, 13)
 BACKTEST_HORIZONS = range(0, 13)
 BACKTEST_MODEL = "naive_backtest"
-BACKTEST_VERSION = "backtest-2"
+BACKTEST_VERSION = "backtest-3"
 # series -> months between the made_at month and the last value that would have been published/complete by then
 INFO_LAG = {"cpif_annual": 2, "policy_rate": 1, "tbill_3m": 1, "gov_bond_10y": 1}
+DAILY_SERIES = {"policy_rate", "tbill_3m", "gov_bond_10y"}          # daily data exist for these (Riksbank)
+DAILY_MODELS = {"ki"}                                               # their forecasts have a publication DAY (made_at)
 CUTOFF_MODELS = {("cpif_annual", "riksbank")}                      # rows whose data_vintage is the data cutoff date
 OUTCOME_OF = {"policy_rate_forward_qmean": "policy_rate_qmean"}     # market path is judged against the actual policy rate
 ERAS = [   # (id, test on the target month 'YYYY-MM'); labels and wording live in forecasts/conventions.yml
@@ -68,28 +72,60 @@ def load_outcomes(con, today: dt.date | None = None) -> dict[tuple[str, str], fl
     return out
 
 
-def info_month(row: dict) -> str | None:
-    """The last month whose value the forecaster could use: the benchmark gets exactly this value."""
+def load_daily(con) -> dict[str, tuple[list[str], list[float]]]:
+    """{series: (sorted ISO dates, values)} of the Riksbank's daily rates, for the information-date rule of KI."""
+    wanted = ", ".join(f"'{s}'" for s in sorted(DAILY_SERIES))
+    out: dict[str, tuple[list[str], list[float]]] = {}
+    for key, d, v in con.execute(
+            f"select series_key, obs_date, value from main.stg_riksbank_observations where series_key in ({wanted}) "
+            "order by series_key, obs_date").fetchall():
+        dates, vals = out.setdefault(key, ([], []))
+        if dates and dates[-1] == d.isoformat():
+            vals[-1] = float(v)                                     # same day twice (re-landed snapshot): keep the last
+        else:
+            dates.append(d.isoformat())
+            vals.append(float(v))
+    return out
+
+
+def last_daily_before(daily: dict, series: str, day: str) -> tuple[str, float] | None:
+    """Last daily observation strictly before `day` (the rate that was known when the forecast was published)."""
+    dates, vals = daily.get(series, ([], []))
+    i = bisect.bisect_left(dates, day)
+    return (dates[i - 1], vals[i - 1]) if i > 0 else None
+
+
+def info_month(row: dict, daily: bool = False) -> str | None:
+    """The information date the benchmark gets: 'YYYY-MM' (a month) or 'd:YYYY-MM-DD' (the day a KI rate forecast came out)."""
     series = row["series"]
+    if daily and row["model"] in DAILY_MODELS and series in DAILY_SERIES:
+        return "d:" + str(row["made_at"])[:10]
     if (series, row["model"]) in CUTOFF_MODELS and row.get("data_vintage"):
         return str(row["data_vintage"])[:7]
     lag = INFO_LAG.get(series)
     return None if lag is None else add_months(row["made_at"][:7], -lag)
 
 
-def backtest_rows(outcomes: dict, requests: dict[str, set[tuple[str, str]]]) -> list[dict]:
+def backtest_rows(outcomes: dict, requests: dict[str, set[tuple[str, str]]], daily: dict | None = None) -> list[dict]:
     """Hindsight random-walk baseline for each (series, made_at, info_month) that some model needed."""
     rows = []
     for series, pairs in requests.items():
         for made_at, info in sorted(pairs):
-            last = outcomes.get((series, info))
+            if info.startswith("d:"):
+                hit = last_daily_before(daily or {}, series, info[2:])
+                if hit is None:
+                    continue
+                last, vintage = hit[1], hit[0]
+            else:
+                last = outcomes.get((series, info))
+                vintage = info + "-01"
             if last is None:
                 continue
             month = made_at[:7]
             for h in BACKTEST_HORIZONS:
                 rows.append({"series": series, "model": BACKTEST_MODEL, "model_version": BACKTEST_VERSION,
                              "made_at": made_at, "target_period": add_months(month, h), "horizon": h, "point": last,
-                             "p10": "", "p90": "", "data_vintage": info + "-01", "info_month": info})
+                             "p10": "", "p90": "", "data_vintage": vintage, "info_month": info})
     return rows
 
 
@@ -143,13 +179,13 @@ def _summarise(items: list[dict]) -> dict:
     return out
 
 
-def _scored(ledger: list[dict], outcomes: dict) -> list[dict]:
+def _scored(ledger: list[dict], outcomes: dict, daily: dict | None = None) -> list[dict]:
     requests: dict[str, set[tuple[str, str]]] = {}
     for r in ledger:
-        im = info_month(r)
+        im = info_month(r, daily is not None)
         if im is not None:
             requests.setdefault(r["series"], set()).add((r["made_at"], im))
-    bench = backtest_rows(outcomes, requests)
+    bench = backtest_rows(outcomes, requests, daily)
     baseline = {(r["series"], r["target_period"], int(r["horizon"]), r["info_month"]): float(r["point"]) for r in bench}
     scored = []
     for r in list(ledger) + bench:
@@ -157,16 +193,16 @@ def _scored(ledger: list[dict], outcomes: dict) -> list[dict]:
         actual = outcomes.get((OUTCOME_OF.get(series, series), target))
         if actual is None:
             continue
-        im = r.get("info_month") or info_month(r)
+        im = r.get("info_month") or info_month(r, daily is not None)
         scored.append({"series": series, "model": r["model"], "version": r.get("model_version"), "h": h, "target": target,
                        "made_at": r["made_at"], "error": float(r["point"]) - actual, "actual": actual,
                        "naive": baseline.get((series, target, h, im)), "p10": r.get("p10"), "p90": r.get("p90")})
     return scored
 
 
-def score_all(ledger: list[dict], outcomes: dict) -> dict:
+def score_all(ledger: list[dict], outcomes: dict, daily: dict | None = None) -> dict:
     """Returns {"headline", "other_horizons", "by_horizon", "by_era"}; every row carries n and release counts."""
-    scored = _scored(ledger, outcomes)
+    scored = _scored(ledger, outcomes, daily)
 
     def group(pred, label: str, items=scored) -> list[dict]:
         buckets: dict[tuple, list[dict]] = {}

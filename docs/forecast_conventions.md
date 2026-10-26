@@ -27,10 +27,10 @@ It is published as `v1/forecast_conventions.json`. **Any page that shows a forec
    our models, scores) is our own calculation and is labelled so.
 9. **Known gap:** Riksbank round 2020:2 has no single forecast (two scenarios); skipped on purpose.
 
-10. **Benchmark.** `naive_backtest` (version `backtest-2`) is a random walk computed in hindsight for every date another
+10. **Benchmark.** `naive_backtest` (version `backtest-3`) is a random walk computed in hindsight for every date another
     model published (horizons 0-12). It gets the **same information date as the forecast it is compared with**: for Riksbank
-    CPIF, the value for the round's own data cutoff month; otherwise the last value published/complete by the publication
-    month (CPIF two months before, rates the previous month). Version 1 always used two months back, which flattered the
+    CPIF, the value for the round's own data cutoff month; for KI interest rates, the last *daily* Riksbank value strictly
+    before the day KI published; otherwise the last value published/complete by the publication month. Version 1 always used two months back, which flattered the
     Riksbank (CPIF skill 0.37 vs 0.29 with the fair benchmark; the Riksbank's cutoff was only one month before publication
     in 38 of 59 rounds).
     It exists because the real-time `naive` baseline only started in 2026-10. It is computed when the scoreboard is built
@@ -60,7 +60,7 @@ It is published as `v1/forecast_conventions.json`. **Any page that shows a forec
   observations after it are forecasts (e.g. round 2022:1 forecast March 2022 CPIF at 3.84%; the outcome was 6.1%).
 - KI vintages: months before the release month equal outcomes; the release month already differs (see `docs/sources.md`).
 
-## What the first splits showed (Riksbank CPIF, horizons 1-12, benchmark backtest-2, 2026-10-25)
+## What the first splits showed (Riksbank CPIF, horizons 1-12, benchmark backtest-2/3, 2026-10-25; the CPIF benchmark is identical in both)
 | Target months | n | rounds | skill | 90% interval | bias |
 |---|---|---|---|---|---|
 | All | 690 | 59 | 0.29 | 0.13 to 0.45 | -0.44 |

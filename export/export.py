@@ -93,18 +93,18 @@ def build_scoreboard_payload(con, ledger_path: Path, conventions: dict, i18n: di
                              today: dt.date | None = None) -> dict:
     """Scores of every logged forecast against published outcomes. See forecasts/conventions.yml for how to read it."""
     from forecasts.ledger import read_ledger
-    from forecasts.scoring import load_outcomes, score_all
+    from forecasts.scoring import load_daily, load_outcomes, score_all
     ledger = read_ledger(ledger_path)
-    results = (score_all(ledger, load_outcomes(con, today)) if ledger
+    results = (score_all(ledger, load_outcomes(con, today), load_daily(con)) if ledger
                else {"headline": [], "other_horizons": [], "by_horizon": [], "by_era": []})
     return {"meta": {"schema_version": "1.1", "generated_at": generated_at, "disclaimer": i18n["disclaimer"],
                      "conventions": "forecast_conventions.json",
-                     "benchmark": {"en": "naive_backtest (version backtest-2) = random walk computed in hindsight, given the same "
-                                         "information date as the forecast it is compared with; skill > 0 means better than that "
+                     "benchmark": {"en": "naive_backtest (version backtest-3) = random walk computed in hindsight, given the same "
+                                         "information date as the forecast it is compared with (for KI interest rates: the last daily value before the publication day); skill > 0 means better than that "
                                          "baseline on the same target months and horizons. skill_ci90 = 90% interval from a "
                                          "bootstrap over whole rounds/releases.",
-                                   "sv": "naive_backtest (version backtest-2) = slumpvandring beräknad i efterhand med samma "
-                                         "informationsdatum som prognosen den jämförs med; skill > 0 betyder bättre än den "
+                                   "sv": "naive_backtest (version backtest-3) = slumpvandring beräknad i efterhand med samma "
+                                         "informationsdatum som prognosen den jämförs med (för KI:s räntor: senaste dagsvärdet före publiceringsdagen); skill > 0 betyder bättre än den "
                                          "jämförelsen för samma målmånader och horisonter. skill_ci90 = 90-procentigt intervall "
                                          "från en bootstrap över hela beslutsomgångar/publiceringar."},
                      "ledger_rows": len(ledger)},

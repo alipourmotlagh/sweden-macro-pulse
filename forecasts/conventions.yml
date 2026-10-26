@@ -75,10 +75,11 @@ models:
     label: {en: "Naive baseline (calculated in hindsight)", sv: "Naiv jämförelse (beräknad i efterhand)"}
     definition: >
       The same random-walk idea computed AFTER THE FACT for every date on which another model published (horizons 0-12),
-      version backtest-2. It gets the same information date as the forecast it is compared with: for Riksbank CPIF the
-      value for the round's own data cutoff month; otherwise the last value published/complete by the publication month
-      (CPIF two months before, rates the previous month). Version backtest-1 always used the value two months back and
-      flattered the Riksbank (skill 0.37 became 0.29 with the fairer benchmark).
+      version backtest-3. It gets the same information date as the forecast it is compared with: for Riksbank CPIF the
+      value for the round's own data cutoff month; for KI interest rates the last DAILY Riksbank value strictly before the
+      day KI published; otherwise the last value published/complete by the publication month (CPIF two months before).
+      Version backtest-1 always used the value two months back and flattered the Riksbank (skill 0.37 became 0.29);
+      backtest-2 still used the previous month for KI, which flattered KI (rates move within a month).
       Needed because the real-time naive baseline only started in 2026-10. Computed when the scoreboard is built, never
       written to the ledger. Indicative: outcomes are used as now published (CPIF and rates are not revised).
     note:

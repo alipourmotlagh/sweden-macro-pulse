@@ -1,4 +1,4 @@
-"""Benchmark fairness (backtest-2), eras, bootstrap and the per-round view."""
+"""Benchmark fairness (backtest-2 and 3), eras, bootstrap and the per-round view."""
 from forecasts import scoring
 from tests.test_scoring import months, outcomes_cpif, row
 
@@ -67,3 +67,25 @@ def test_rounds_view_paths_summary_and_pending_outcomes():
     assert view[0]["n_scored_h1_12"] == 1 and view[0]["n_pending_h1_12"] == 3
     assert view[0]["mae_h1_12"] == 0.5 and view[0]["bias_h1_12"] == 0.5
     assert view[0]["benchmark_mae_h1_12"] == 0.0                                          # cutoff October = 2.0 = outcome
+
+
+def test_ki_rate_benchmark_gets_the_last_daily_value_before_the_publication_day():
+    import duckdb
+    con = duckdb.connect()
+    con.execute("create table stg_riksbank_observations(series_key varchar, obs_date date, value double)")
+    for d, v in (("2025-03-10", 2.0), ("2025-03-11", 2.5), ("2025-03-12", 3.0), ("2025-03-13", 3.5)):
+        con.execute("insert into stg_riksbank_observations values ('policy_rate', ?, ?)", [d, v])
+    con.execute("insert into stg_riksbank_observations values ('policy_rate', date '2025-03-11', 2.5)")   # duplicate day
+    daily = scoring.load_daily(con)
+    assert scoring.last_daily_before(daily, "policy_rate", "2025-03-12") == ("2025-03-11", 2.5)   # strictly before
+    assert scoring.last_daily_before(daily, "policy_rate", "2025-03-10") is None
+    o = {("policy_rate", "2025-04"): 3.0}
+    k = row("policy_rate", "ki", "2025-03-12", "2025-04", 1, 3.0)
+    assert scoring.info_month(k, daily=True) == "d:2025-03-12" and scoring.info_month(k) == "2025-02"
+    s = [x for x in scoring._scored([k], o, daily) if x["model"] == "ki"][0]
+    assert s["naive"] == 2.5 and s["error"] == 0.0
+    # without daily data the month-lag rule still applies (older callers and tests)
+    assert [x for x in scoring._scored([k], {**o, ("policy_rate", "2025-02"): 1.0}) if x["model"] == "ki"][0]["naive"] == 1.0
+    # other models and series do not use the daily rule
+    r = rb("2025-03-24", "2025-04", 1, 4.0, "2025-02-28")
+    assert scoring.info_month(r, daily=True) == "2025-02"

@@ -12,7 +12,7 @@ Status: [ ] open, [x] done. Keep one line per item with the reason.
 - [ ] Quarterly benchmark for `policy_rate_qmean` (no skill score today); KI monthly rate forecasts averaged into quarters for comparison.
 - [ ] Quarterly mean of the policy rate is the mean of three monthly averages, the Riksbank may average daily values. Check the size of the difference.
 - [ ] Models for month 2+: ETS/ARIMA, TimesFM 2.5, Chronos-2 (licences in `forecasts/model_register.yml`); TiRex-2 licence unverified.
-- [ ] Check benchmark fairness for the KI interest-rate series too: backtest-2 still uses the previous month for KI (KI publishes mid-month). Matters most for the 10-year yield (KI skill was -0.05).
+- [x] Done 2026-10-26: KI interest-rate benchmark now uses the last daily value before KI's publication day (backtest-3).
 - [ ] Show the real-time baseline in the scoreboard once its first target months have outcomes (from November 2026).
 - [ ] Interval coverage for models other than the real-time naive (Riksbank and KI publish no intervals in our data).
 - [ ] Investigate the small KI outcome deviations in 2019-06 and 2019-10 (~0.15); first two KI releases lack the policy rate.
