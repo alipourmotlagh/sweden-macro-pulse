@@ -29,13 +29,14 @@ global:
       sv: "Skill jämför en prognos med den enkla jämförelsen för exakt samma månader: över noll betyder att den var bättre än att anta att inget ändras. Läs den alltid tillsammans med antalet prognoser den bygger på."
   eras:
     definition: >
-      Results are also split by TARGET month into eras fixed in advance: before 2021, 2021-2023 (the inflation surge),
-      2024 onward, and everything except 2021-2023. They must not be changed after looking at results (that would be
-      cherry-picking). The number of distinct rounds/releases is shown in every row, because forecasts from one round
-      overlap heavily and the rounds are the honest sample size.
+      Results are also split by TARGET month into eras: before 2021, 2021-2023, 2024 onward, and everything except
+      2021-2023. The eras were fixed after the first pooled scoreboard but before any era-level result was computed;
+      2021-2023 was chosen to isolate the inflation surge, which was already visible in the pooled bias. They will not be
+      changed after looking at results (that would be cherry-picking). The number of distinct rounds/releases is shown in
+      every row, because forecasts from one round overlap heavily and the rounds are the honest sample size.
     note:
-      en: "Results are split into fixed periods by the month being forecast, so you can see whether one episode, such as the 2021-2023 inflation surge, drives the average. The number of rounds matters more than the number of forecasts, because forecasts from the same round overlap."
-      sv: "Resultaten delas upp i fasta perioder efter vilken månad som prognostiseras, så att man kan se om ett enskilt skeende, som inflationsuppgången 2021-2023, styr genomsnittet. Antalet beslutsomgångar betyder mer än antalet prognoser, eftersom prognoser från samma omgång överlappar."
+      en: "Results are split into periods by the month being forecast, so you can see whether one episode drives the average. The periods were fixed before any period-level result was computed; one of them was chosen to isolate the 2021-2023 inflation surge. They will not be changed after looking at results. The number of rounds matters more than the number of forecasts, because forecasts from the same round overlap."
+      sv: "Resultaten delas upp i perioder efter vilken månad som prognostiseras, så att man kan se om ett enskilt skeende styr genomsnittet. Perioderna bestämdes innan något resultat per period hade beräknats; en av dem valdes för att isolera inflationsuppgången 2021-2023. De kommer inte att ändras efter att man har sett resultaten. Antalet beslutsomgångar betyder mer än antalet prognoser, eftersom prognoser från samma omgång överlappar."
     items:
       before_2021: {label: {en: "Before 2021", sv: "Före 2021"}}
       surge_2021_2023: {label: {en: "2021 to 2023 (inflation surge)", sv: "2021 till 2023 (inflationsuppgången)"}}
