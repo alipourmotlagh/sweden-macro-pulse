@@ -1,0 +1,2344 @@
+{
+ "meta": {
+  "schema_version": "1.1",
+  "generated_at": "2026-11-02T13:42:14Z",
+  "disclaimer": {
+   "en": "Illustration of public data, not financial advice.",
+   "sv": "Illustration av offentliga data, inte finansiell rådgivning."
+  },
+  "conventions": "forecast_conventions.json",
+  "benchmark": {
+   "en": "naive_backtest (version backtest-3) = random walk computed in hindsight, given the same information date as the forecast it is compared with (for KI interest rates: the last daily value before the publication day); skill > 0 means better than that baseline on the same target months and horizons. skill_ci90 = 90% interval from a bootstrap over whole rounds/releases.",
+   "sv": "naive_backtest (version backtest-3) = slumpvandring beräknad i efterhand med samma informationsdatum som prognosen den jämförs med (för KI:s räntor: senaste dagsvärdet före publiceringsdagen); skill > 0 betyder bättre än den jämförelsen för samma målmånader och horisonter. skill_ci90 = 90-procentigt intervall från en bootstrap över hela beslutsomgångar/publiceringar."
+  },
+  "ledger_rows": 21058
+ },
+ "labels": {
+  "eras": {
+   "before_2021": {
+    "en": "Before 2021",
+    "sv": "Före 2021"
+   },
+   "surge_2021_2023": {
+    "en": "2021 to 2023 (inflation surge)",
+    "sv": "2021 till 2023 (inflationsuppgången)"
+   },
+   "from_2024": {
+    "en": "2024 onward",
+    "sv": "2024 och framåt"
+   },
+   "excl_surge_2021_2023": {
+    "en": "All periods except 2021 to 2023",
+    "sv": "Alla perioder utom 2021 till 2023"
+   }
+  },
+  "models": {
+   "naive": {
+    "en": "Naive baseline",
+    "sv": "Naiv jämförelse"
+   },
+   "naive_backtest": {
+    "en": "Naive baseline (calculated in hindsight)",
+    "sv": "Naiv jämförelse (beräknad i efterhand)"
+   },
+   "ki": {
+    "en": "National Institute of Economic Research (KI)",
+    "sv": "Konjunkturinstitutet (KI)"
+   },
+   "riksbank": {
+    "en": "The Riksbank",
+    "sv": "Riksbanken"
+   },
+   "market_forward": {
+    "en": "Market expectation (forward rates)",
+    "sv": "Marknadens förväntan (terminsräntor)"
+   }
+  },
+  "series": {
+   "policy_rate": {
+    "en": "Policy rate (monthly average)",
+    "sv": "Styrränta (månadsmedel)"
+   },
+   "tbill_3m": {
+    "en": "Treasury bill yield, 3 months (monthly average)",
+    "sv": "Statsskuldväxelränta, 3 månader (månadsmedel)"
+   },
+   "gov_bond_10y": {
+    "en": "10-year government bond yield (monthly average)",
+    "sv": "Statsobligationsränta, 10 år (månadsmedel)"
+   },
+   "cpif_annual": {
+    "en": "CPIF inflation, annual change",
+    "sv": "KPIF-inflation, årlig förändring"
+   },
+   "cpi_annual": {
+    "en": "CPI inflation, annual change",
+    "sv": "KPI-inflation, årlig förändring"
+   },
+   "policy_rate_qmean": {
+    "en": "Policy rate (quarterly mean)",
+    "sv": "Styrränta (kvartalsmedel)"
+   },
+   "policy_rate_forward_qmean": {
+    "en": "Policy rate expected by markets (quarterly mean)",
+    "sv": "Marknadens förväntade styrränta (kvartalsmedel)"
+   }
+  }
+ },
+ "headline": [
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 690,
+   "mae": 1.252,
+   "rmse": 1.947,
+   "bias": -0.026,
+   "n_releases": 59,
+   "n_target_months": 139,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 690,
+   "mae": 0.886,
+   "rmse": 1.66,
+   "bias": -0.443,
+   "n_releases": 59,
+   "n_target_months": 139,
+   "first_target": "2015-03",
+   "last_target": "2026-09",
+   "n_matched": 690,
+   "mae_matched": 0.886,
+   "mae_naive_matched": 1.252,
+   "skill": 0.292,
+   "skill_ci90": [
+    0.132,
+    0.448
+   ]
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.389,
+   "rmse": 0.529,
+   "bias": 0.071,
+   "n_releases": 44,
+   "n_target_months": 130,
+   "first_target": "2016-01",
+   "last_target": "2026-10",
+   "n_matched": 513,
+   "mae_matched": 0.389,
+   "mae_naive_matched": 0.312,
+   "skill": -0.246,
+   "skill_ci90": [
+    -0.447,
+    -0.07
+   ]
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.312,
+   "rmse": 0.444,
+   "bias": -0.091,
+   "n_releases": 44,
+   "n_target_months": 130,
+   "first_target": "2016-01",
+   "last_target": "2026-10"
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 489,
+   "mae": 0.183,
+   "rmse": 0.432,
+   "bias": -0.109,
+   "n_releases": 42,
+   "n_target_months": 124,
+   "first_target": "2016-07",
+   "last_target": "2026-10",
+   "n_matched": 489,
+   "mae_matched": 0.183,
+   "mae_naive_matched": 0.347,
+   "skill": 0.472,
+   "skill_ci90": [
+    0.354,
+    0.586
+   ]
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 489,
+   "mae": 0.347,
+   "rmse": 0.675,
+   "bias": -0.106,
+   "n_releases": 42,
+   "n_target_months": 124,
+   "first_target": "2016-07",
+   "last_target": "2026-10"
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "headline_h1_12",
+   "n": 230,
+   "mae": 0.123,
+   "rmse": 0.243,
+   "bias": -0.018,
+   "n_releases": 59,
+   "n_target_months": 47,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 230,
+   "mae": 0.139,
+   "rmse": 0.318,
+   "bias": -0.028,
+   "n_releases": 59,
+   "n_target_months": 47,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.276,
+   "rmse": 0.528,
+   "bias": -0.138,
+   "n_releases": 44,
+   "n_target_months": 130,
+   "first_target": "2016-01",
+   "last_target": "2026-10",
+   "n_matched": 513,
+   "mae_matched": 0.276,
+   "mae_naive_matched": 0.375,
+   "skill": 0.262,
+   "skill_ci90": [
+    0.159,
+    0.364
+   ]
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.375,
+   "rmse": 0.693,
+   "bias": -0.131,
+   "n_releases": 44,
+   "n_target_months": 130,
+   "first_target": "2016-01",
+   "last_target": "2026-10"
+  }
+ ],
+ "other_horizons": [
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "h0",
+   "n": 60,
+   "mae": 0.352,
+   "rmse": 0.436,
+   "bias": -0.008,
+   "n_releases": 60,
+   "n_target_months": 60,
+   "first_target": "2015-02",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "h0",
+   "n": 60,
+   "mae": 0.216,
+   "rmse": 0.284,
+   "bias": -0.019,
+   "n_releases": 60,
+   "n_target_months": 60,
+   "first_target": "2015-02",
+   "last_target": "2026-09",
+   "n_matched": 60,
+   "mae_matched": 0.216,
+   "mae_naive_matched": 0.352,
+   "skill": 0.386,
+   "skill_ci90": [
+    0.243,
+    0.511
+   ]
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "h0",
+   "n": 44,
+   "mae": 0.065,
+   "rmse": 0.083,
+   "bias": -0.024,
+   "n_releases": 44,
+   "n_target_months": 44,
+   "first_target": "2015-12",
+   "last_target": "2026-06",
+   "n_matched": 44,
+   "mae_matched": 0.065,
+   "mae_naive_matched": 0.073,
+   "skill": 0.109,
+   "skill_ci90": [
+    -0.174,
+    0.31
+   ]
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "h0",
+   "n": 45,
+   "mae": 0.072,
+   "rmse": 0.111,
+   "bias": 0.025,
+   "n_releases": 45,
+   "n_target_months": 45,
+   "first_target": "2015-12",
+   "last_target": "2026-10"
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "h0",
+   "n": 42,
+   "mae": 0.004,
+   "rmse": 0.017,
+   "bias": -0.001,
+   "n_releases": 42,
+   "n_target_months": 42,
+   "first_target": "2016-06",
+   "last_target": "2026-06",
+   "n_matched": 42,
+   "mae_matched": 0.004,
+   "mae_naive_matched": 0.017,
+   "skill": 0.786,
+   "skill_ci90": [
+    -0.852,
+    0.994
+   ]
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "h0",
+   "n": 43,
+   "mae": 0.017,
+   "rmse": 0.098,
+   "bias": 0.015,
+   "n_releases": 43,
+   "n_target_months": 43,
+   "first_target": "2016-06",
+   "last_target": "2026-10"
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "h0",
+   "n": 26,
+   "mae": 0.005,
+   "rmse": 0.011,
+   "bias": -0.001,
+   "n_releases": 26,
+   "n_target_months": 26,
+   "first_target": "2015-09",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "h0",
+   "n": 27,
+   "mae": 0.003,
+   "rmse": 0.007,
+   "bias": -0.0,
+   "n_releases": 27,
+   "n_target_months": 27,
+   "first_target": "2015-09",
+   "last_target": "2026-09"
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "h0",
+   "n": 44,
+   "mae": 0.031,
+   "rmse": 0.044,
+   "bias": -0.004,
+   "n_releases": 44,
+   "n_target_months": 44,
+   "first_target": "2015-12",
+   "last_target": "2026-06",
+   "n_matched": 44,
+   "mae_matched": 0.031,
+   "mae_naive_matched": 0.03,
+   "skill": -0.051,
+   "skill_ci90": [
+    -0.404,
+    0.178
+   ]
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "h0",
+   "n": 45,
+   "mae": 0.031,
+   "rmse": 0.047,
+   "bias": 0.002,
+   "n_releases": 45,
+   "n_target_months": 45,
+   "first_target": "2015-12",
+   "last_target": "2026-10"
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "h_negative",
+   "n": 21,
+   "mae": 0.14,
+   "rmse": 0.17,
+   "bias": 0.031,
+   "n_releases": 21,
+   "n_target_months": 21,
+   "first_target": "2015-01",
+   "last_target": "2023-01"
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "h_negative",
+   "n": 3,
+   "mae": 0.0,
+   "rmse": 0.0,
+   "bias": 0.0,
+   "n_releases": 3,
+   "n_target_months": 3,
+   "first_target": "2018-06",
+   "last_target": "2021-06"
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "h_negative",
+   "n": 4,
+   "mae": 0.0,
+   "rmse": 0.0,
+   "bias": 0.0,
+   "n_releases": 4,
+   "n_target_months": 4,
+   "first_target": "2018-06",
+   "last_target": "2021-06"
+  }
+ ],
+ "by_horizon": [
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 0,
+   "n": 60,
+   "mae": 0.352,
+   "rmse": 0.436,
+   "bias": -0.008
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 1,
+   "n": 59,
+   "mae": 0.531,
+   "rmse": 0.706,
+   "bias": 0.002
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 2,
+   "n": 59,
+   "mae": 0.675,
+   "rmse": 0.943,
+   "bias": -0.017
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 3,
+   "n": 59,
+   "mae": 0.768,
+   "rmse": 1.125,
+   "bias": 0.012
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 4,
+   "n": 58,
+   "mae": 0.943,
+   "rmse": 1.366,
+   "bias": -0.005
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 5,
+   "n": 58,
+   "mae": 1.06,
+   "rmse": 1.504,
+   "bias": -0.033
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 6,
+   "n": 58,
+   "mae": 1.259,
+   "rmse": 1.815,
+   "bias": -0.017
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 7,
+   "n": 57,
+   "mae": 1.398,
+   "rmse": 2.025,
+   "bias": -0.03
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 8,
+   "n": 57,
+   "mae": 1.489,
+   "rmse": 2.162,
+   "bias": -0.072
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 9,
+   "n": 57,
+   "mae": 1.616,
+   "rmse": 2.364,
+   "bias": -0.03
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 10,
+   "n": 56,
+   "mae": 1.73,
+   "rmse": 2.596,
+   "bias": -0.037
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 11,
+   "n": 56,
+   "mae": 1.779,
+   "rmse": 2.645,
+   "bias": -0.061
+  },
+  {
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "horizon": 12,
+   "n": 56,
+   "mae": 1.882,
+   "rmse": 2.806,
+   "bias": -0.025
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": -1,
+   "n": 21,
+   "mae": 0.14,
+   "rmse": 0.17,
+   "bias": 0.031
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 0,
+   "n": 60,
+   "mae": 0.216,
+   "rmse": 0.284,
+   "bias": -0.019
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 1,
+   "n": 59,
+   "mae": 0.334,
+   "rmse": 0.502,
+   "bias": -0.097
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 2,
+   "n": 59,
+   "mae": 0.449,
+   "rmse": 0.693,
+   "bias": -0.129
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 3,
+   "n": 59,
+   "mae": 0.486,
+   "rmse": 0.795,
+   "bias": -0.15
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 4,
+   "n": 58,
+   "mae": 0.666,
+   "rmse": 1.117,
+   "bias": -0.228
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 5,
+   "n": 58,
+   "mae": 0.764,
+   "rmse": 1.229,
+   "bias": -0.302
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 6,
+   "n": 58,
+   "mae": 0.845,
+   "rmse": 1.47,
+   "bias": -0.377
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 7,
+   "n": 57,
+   "mae": 0.942,
+   "rmse": 1.668,
+   "bias": -0.483
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 8,
+   "n": 57,
+   "mae": 1.046,
+   "rmse": 1.834,
+   "bias": -0.584
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 9,
+   "n": 57,
+   "mae": 1.162,
+   "rmse": 2.025,
+   "bias": -0.641
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 10,
+   "n": 56,
+   "mae": 1.286,
+   "rmse": 2.294,
+   "bias": -0.751
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 11,
+   "n": 56,
+   "mae": 1.333,
+   "rmse": 2.388,
+   "bias": -0.828
+  },
+  {
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "horizon": 12,
+   "n": 56,
+   "mae": 1.401,
+   "rmse": 2.454,
+   "bias": -0.805
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 0,
+   "n": 44,
+   "mae": 0.065,
+   "rmse": 0.083,
+   "bias": -0.024
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 1,
+   "n": 44,
+   "mae": 0.136,
+   "rmse": 0.197,
+   "bias": -0.031
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 2,
+   "n": 44,
+   "mae": 0.195,
+   "rmse": 0.275,
+   "bias": 0.004
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 3,
+   "n": 44,
+   "mae": 0.264,
+   "rmse": 0.35,
+   "bias": 0.021
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 4,
+   "n": 44,
+   "mae": 0.299,
+   "rmse": 0.387,
+   "bias": 0.018
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 5,
+   "n": 43,
+   "mae": 0.333,
+   "rmse": 0.435,
+   "bias": 0.066
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 6,
+   "n": 43,
+   "mae": 0.395,
+   "rmse": 0.505,
+   "bias": 0.07
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 7,
+   "n": 43,
+   "mae": 0.405,
+   "rmse": 0.53,
+   "bias": 0.072
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 8,
+   "n": 42,
+   "mae": 0.453,
+   "rmse": 0.588,
+   "bias": 0.122
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 9,
+   "n": 42,
+   "mae": 0.513,
+   "rmse": 0.642,
+   "bias": 0.119
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 10,
+   "n": 42,
+   "mae": 0.529,
+   "rmse": 0.674,
+   "bias": 0.116
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 11,
+   "n": 41,
+   "mae": 0.568,
+   "rmse": 0.709,
+   "bias": 0.144
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "horizon": 12,
+   "n": 41,
+   "mae": 0.615,
+   "rmse": 0.758,
+   "bias": 0.153
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 0,
+   "n": 45,
+   "mae": 0.072,
+   "rmse": 0.111,
+   "bias": 0.025
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 1,
+   "n": 44,
+   "mae": 0.109,
+   "rmse": 0.15,
+   "bias": -0.008
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 2,
+   "n": 44,
+   "mae": 0.184,
+   "rmse": 0.228,
+   "bias": -0.002
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 3,
+   "n": 44,
+   "mae": 0.248,
+   "rmse": 0.298,
+   "bias": -0.024
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 4,
+   "n": 44,
+   "mae": 0.269,
+   "rmse": 0.36,
+   "bias": -0.06
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 5,
+   "n": 43,
+   "mae": 0.277,
+   "rmse": 0.39,
+   "bias": -0.047
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 6,
+   "n": 43,
+   "mae": 0.316,
+   "rmse": 0.436,
+   "bias": -0.075
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 7,
+   "n": 43,
+   "mae": 0.335,
+   "rmse": 0.447,
+   "bias": -0.108
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 8,
+   "n": 42,
+   "mae": 0.352,
+   "rmse": 0.48,
+   "bias": -0.097
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 9,
+   "n": 42,
+   "mae": 0.394,
+   "rmse": 0.535,
+   "bias": -0.132
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 10,
+   "n": 42,
+   "mae": 0.4,
+   "rmse": 0.563,
+   "bias": -0.17
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 11,
+   "n": 41,
+   "mae": 0.432,
+   "rmse": 0.584,
+   "bias": -0.181
+  },
+  {
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "horizon": 12,
+   "n": 41,
+   "mae": 0.455,
+   "rmse": 0.625,
+   "bias": -0.207
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 0,
+   "n": 42,
+   "mae": 0.004,
+   "rmse": 0.017,
+   "bias": -0.001
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 1,
+   "n": 42,
+   "mae": 0.021,
+   "rmse": 0.058,
+   "bias": -0.002
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 2,
+   "n": 42,
+   "mae": 0.038,
+   "rmse": 0.081,
+   "bias": 0.006
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 3,
+   "n": 42,
+   "mae": 0.052,
+   "rmse": 0.108,
+   "bias": -0.014
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 4,
+   "n": 42,
+   "mae": 0.089,
+   "rmse": 0.176,
+   "bias": -0.036
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 5,
+   "n": 41,
+   "mae": 0.111,
+   "rmse": 0.221,
+   "bias": -0.055
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 6,
+   "n": 41,
+   "mae": 0.139,
+   "rmse": 0.294,
+   "bias": -0.085
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 7,
+   "n": 41,
+   "mae": 0.188,
+   "rmse": 0.382,
+   "bias": -0.12
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 8,
+   "n": 40,
+   "mae": 0.235,
+   "rmse": 0.443,
+   "bias": -0.147
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 9,
+   "n": 40,
+   "mae": 0.277,
+   "rmse": 0.552,
+   "bias": -0.184
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 10,
+   "n": 40,
+   "mae": 0.318,
+   "rmse": 0.618,
+   "bias": -0.208
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 11,
+   "n": 39,
+   "mae": 0.36,
+   "rmse": 0.687,
+   "bias": -0.228
+  },
+  {
+   "series": "policy_rate",
+   "model": "ki",
+   "horizon": 12,
+   "n": 39,
+   "mae": 0.41,
+   "rmse": 0.781,
+   "bias": -0.258
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 0,
+   "n": 43,
+   "mae": 0.017,
+   "rmse": 0.098,
+   "bias": 0.015
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 1,
+   "n": 42,
+   "mae": 0.054,
+   "rmse": 0.12,
+   "bias": -0.009
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 2,
+   "n": 42,
+   "mae": 0.102,
+   "rmse": 0.191,
+   "bias": -0.017
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 3,
+   "n": 42,
+   "mae": 0.157,
+   "rmse": 0.28,
+   "bias": -0.048
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 4,
+   "n": 42,
+   "mae": 0.217,
+   "rmse": 0.392,
+   "bias": -0.064
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 5,
+   "n": 41,
+   "mae": 0.269,
+   "rmse": 0.468,
+   "bias": -0.072
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 6,
+   "n": 41,
+   "mae": 0.316,
+   "rmse": 0.577,
+   "bias": -0.094
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 7,
+   "n": 41,
+   "mae": 0.385,
+   "rmse": 0.664,
+   "bias": -0.119
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 8,
+   "n": 40,
+   "mae": 0.436,
+   "rmse": 0.747,
+   "bias": -0.13
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 9,
+   "n": 40,
+   "mae": 0.48,
+   "rmse": 0.842,
+   "bias": -0.152
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 10,
+   "n": 40,
+   "mae": 0.55,
+   "rmse": 0.921,
+   "bias": -0.178
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 11,
+   "n": 39,
+   "mae": 0.608,
+   "rmse": 1.01,
+   "bias": -0.191
+  },
+  {
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "horizon": 12,
+   "n": 39,
+   "mae": 0.653,
+   "rmse": 1.086,
+   "bias": -0.214
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": -1,
+   "n": 3,
+   "mae": 0.0,
+   "rmse": 0.0,
+   "bias": 0.0
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 0,
+   "n": 26,
+   "mae": 0.005,
+   "rmse": 0.011,
+   "bias": -0.001
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 1,
+   "n": 13,
+   "mae": 0.017,
+   "rmse": 0.025,
+   "bias": 0.01
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 2,
+   "n": 20,
+   "mae": 0.025,
+   "rmse": 0.038,
+   "bias": -0.009
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 3,
+   "n": 26,
+   "mae": 0.041,
+   "rmse": 0.056,
+   "bias": 0.012
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 4,
+   "n": 13,
+   "mae": 0.057,
+   "rmse": 0.085,
+   "bias": 0.006
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 5,
+   "n": 20,
+   "mae": 0.048,
+   "rmse": 0.091,
+   "bias": -0.03
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 6,
+   "n": 25,
+   "mae": 0.1,
+   "rmse": 0.142,
+   "bias": 0.027
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 7,
+   "n": 13,
+   "mae": 0.171,
+   "rmse": 0.264,
+   "bias": -0.076
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 8,
+   "n": 20,
+   "mae": 0.12,
+   "rmse": 0.242,
+   "bias": -0.069
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 9,
+   "n": 24,
+   "mae": 0.163,
+   "rmse": 0.244,
+   "bias": 0.053
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 10,
+   "n": 13,
+   "mae": 0.354,
+   "rmse": 0.582,
+   "bias": -0.229
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 11,
+   "n": 20,
+   "mae": 0.17,
+   "rmse": 0.313,
+   "bias": -0.082
+  },
+  {
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "horizon": 12,
+   "n": 23,
+   "mae": 0.252,
+   "rmse": 0.347,
+   "bias": 0.047
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": -1,
+   "n": 4,
+   "mae": 0.0,
+   "rmse": 0.0,
+   "bias": 0.0
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 0,
+   "n": 27,
+   "mae": 0.003,
+   "rmse": 0.007,
+   "bias": -0.0
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 1,
+   "n": 13,
+   "mae": 0.003,
+   "rmse": 0.005,
+   "bias": -0.002
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 2,
+   "n": 20,
+   "mae": 0.004,
+   "rmse": 0.008,
+   "bias": -0.004
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 3,
+   "n": 26,
+   "mae": 0.029,
+   "rmse": 0.046,
+   "bias": 0.005
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 4,
+   "n": 13,
+   "mae": 0.049,
+   "rmse": 0.075,
+   "bias": -0.02
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 5,
+   "n": 20,
+   "mae": 0.05,
+   "rmse": 0.091,
+   "bias": -0.03
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 6,
+   "n": 25,
+   "mae": 0.103,
+   "rmse": 0.189,
+   "bias": 0.003
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 7,
+   "n": 13,
+   "mae": 0.207,
+   "rmse": 0.317,
+   "bias": -0.104
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 8,
+   "n": 20,
+   "mae": 0.105,
+   "rmse": 0.283,
+   "bias": -0.069
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 9,
+   "n": 24,
+   "mae": 0.208,
+   "rmse": 0.345,
+   "bias": 0.037
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 10,
+   "n": 13,
+   "mae": 0.437,
+   "rmse": 0.703,
+   "bias": -0.26
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 11,
+   "n": 20,
+   "mae": 0.16,
+   "rmse": 0.405,
+   "bias": -0.083
+  },
+  {
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "horizon": 12,
+   "n": 23,
+   "mae": 0.361,
+   "rmse": 0.533,
+   "bias": 0.051
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 0,
+   "n": 44,
+   "mae": 0.031,
+   "rmse": 0.044,
+   "bias": -0.004
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 1,
+   "n": 44,
+   "mae": 0.062,
+   "rmse": 0.086,
+   "bias": -0.018
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 2,
+   "n": 44,
+   "mae": 0.101,
+   "rmse": 0.154,
+   "bias": -0.032
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 3,
+   "n": 44,
+   "mae": 0.146,
+   "rmse": 0.213,
+   "bias": -0.046
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 4,
+   "n": 44,
+   "mae": 0.17,
+   "rmse": 0.27,
+   "bias": -0.076
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 5,
+   "n": 43,
+   "mae": 0.213,
+   "rmse": 0.347,
+   "bias": -0.097
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 6,
+   "n": 43,
+   "mae": 0.25,
+   "rmse": 0.413,
+   "bias": -0.114
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 7,
+   "n": 43,
+   "mae": 0.293,
+   "rmse": 0.492,
+   "bias": -0.163
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 8,
+   "n": 42,
+   "mae": 0.351,
+   "rmse": 0.574,
+   "bias": -0.184
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 9,
+   "n": 42,
+   "mae": 0.381,
+   "rmse": 0.644,
+   "bias": -0.197
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 10,
+   "n": 42,
+   "mae": 0.406,
+   "rmse": 0.73,
+   "bias": -0.228
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 11,
+   "n": 41,
+   "mae": 0.469,
+   "rmse": 0.816,
+   "bias": -0.255
+  },
+  {
+   "series": "tbill_3m",
+   "model": "ki",
+   "horizon": 12,
+   "n": 41,
+   "mae": 0.517,
+   "rmse": 0.887,
+   "bias": -0.271
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 0,
+   "n": 45,
+   "mae": 0.031,
+   "rmse": 0.047,
+   "bias": 0.002
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 1,
+   "n": 44,
+   "mae": 0.076,
+   "rmse": 0.122,
+   "bias": -0.023
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 2,
+   "n": 44,
+   "mae": 0.138,
+   "rmse": 0.224,
+   "bias": -0.045
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 3,
+   "n": 44,
+   "mae": 0.189,
+   "rmse": 0.31,
+   "bias": -0.06
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 4,
+   "n": 44,
+   "mae": 0.244,
+   "rmse": 0.401,
+   "bias": -0.084
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 5,
+   "n": 43,
+   "mae": 0.308,
+   "rmse": 0.499,
+   "bias": -0.1
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 6,
+   "n": 43,
+   "mae": 0.356,
+   "rmse": 0.585,
+   "bias": -0.108
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 7,
+   "n": 43,
+   "mae": 0.405,
+   "rmse": 0.683,
+   "bias": -0.146
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 8,
+   "n": 42,
+   "mae": 0.474,
+   "rmse": 0.776,
+   "bias": -0.166
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 9,
+   "n": 42,
+   "mae": 0.513,
+   "rmse": 0.853,
+   "bias": -0.176
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 10,
+   "n": 42,
+   "mae": 0.562,
+   "rmse": 0.948,
+   "bias": -0.211
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 11,
+   "n": 41,
+   "mae": 0.625,
+   "rmse": 1.034,
+   "bias": -0.234
+  },
+  {
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "horizon": 12,
+   "n": 41,
+   "mae": 0.664,
+   "rmse": 1.098,
+   "bias": -0.246
+  }
+ ],
+ "by_era": [
+  {
+   "era": "before_2021",
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 379,
+   "mae": 0.491,
+   "rmse": 0.644,
+   "bias": 0.066,
+   "n_releases": 34,
+   "n_target_months": 70,
+   "first_target": "2015-03",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "before_2021",
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 379,
+   "mae": 0.432,
+   "rmse": 0.594,
+   "bias": 0.209,
+   "n_releases": 34,
+   "n_target_months": 70,
+   "first_target": "2015-03",
+   "last_target": "2020-12",
+   "n_matched": 379,
+   "mae_matched": 0.432,
+   "mae_naive_matched": 0.491,
+   "skill": 0.121,
+   "skill_ci90": [
+    -0.015,
+    0.244
+   ]
+  },
+  {
+   "era": "before_2021",
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 233,
+   "mae": 0.41,
+   "rmse": 0.539,
+   "bias": 0.371,
+   "n_releases": 21,
+   "n_target_months": 60,
+   "first_target": "2016-01",
+   "last_target": "2020-12",
+   "n_matched": 233,
+   "mae_matched": 0.41,
+   "mae_naive_matched": 0.248,
+   "skill": -0.656,
+   "skill_ci90": [
+    -1.067,
+    -0.293
+   ]
+  },
+  {
+   "era": "before_2021",
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 233,
+   "mae": 0.248,
+   "rmse": 0.321,
+   "bias": 0.064,
+   "n_releases": 21,
+   "n_target_months": 60,
+   "first_target": "2016-01",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "before_2021",
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 209,
+   "mae": 0.035,
+   "rmse": 0.087,
+   "bias": -0.018,
+   "n_releases": 19,
+   "n_target_months": 54,
+   "first_target": "2016-07",
+   "last_target": "2020-12",
+   "n_matched": 209,
+   "mae_matched": 0.035,
+   "mae_naive_matched": 0.072,
+   "skill": 0.522,
+   "skill_ci90": [
+    0.178,
+    0.737
+   ]
+  },
+  {
+   "era": "before_2021",
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 209,
+   "mae": 0.072,
+   "rmse": 0.133,
+   "bias": -0.072,
+   "n_releases": 19,
+   "n_target_months": 54,
+   "first_target": "2016-07",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "before_2021",
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "headline_h1_12",
+   "n": 128,
+   "mae": 0.066,
+   "rmse": 0.104,
+   "bias": 0.007,
+   "n_releases": 34,
+   "n_target_months": 24,
+   "first_target": "2015-03",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "before_2021",
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 128,
+   "mae": 0.045,
+   "rmse": 0.074,
+   "bias": 0.023,
+   "n_releases": 34,
+   "n_target_months": 24,
+   "first_target": "2015-03",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "before_2021",
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 233,
+   "mae": 0.108,
+   "rmse": 0.148,
+   "bias": 0.012,
+   "n_releases": 21,
+   "n_target_months": 60,
+   "first_target": "2016-01",
+   "last_target": "2020-12",
+   "n_matched": 233,
+   "mae_matched": 0.108,
+   "mae_naive_matched": 0.125,
+   "skill": 0.141,
+   "skill_ci90": [
+    -0.065,
+    0.307
+   ]
+  },
+  {
+   "era": "before_2021",
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 233,
+   "mae": 0.125,
+   "rmse": 0.164,
+   "bias": -0.053,
+   "n_releases": 21,
+   "n_target_months": 60,
+   "first_target": "2016-01",
+   "last_target": "2020-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 177,
+   "mae": 2.709,
+   "rmse": 3.259,
+   "bias": -1.033,
+   "n_releases": 19,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 177,
+   "mae": 2.151,
+   "rmse": 3.116,
+   "bias": -2.066,
+   "n_releases": 19,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12",
+   "n_matched": 177,
+   "mae_matched": 2.151,
+   "mae_naive_matched": 2.709,
+   "skill": 0.206,
+   "skill_ci90": [
+    0.003,
+    0.429
+   ]
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.468,
+   "rmse": 0.647,
+   "bias": -0.349,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12",
+   "n_matched": 145,
+   "mae_matched": 0.468,
+   "mae_naive_matched": 0.467,
+   "skill": -0.002,
+   "skill_ci90": [
+    -0.242,
+    0.182
+   ]
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.467,
+   "rmse": 0.658,
+   "bias": -0.389,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.405,
+   "rmse": 0.746,
+   "bias": -0.396,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12",
+   "n_matched": 145,
+   "mae_matched": 0.405,
+   "mae_naive_matched": 0.613,
+   "skill": 0.34,
+   "skill_ci90": [
+    0.178,
+    0.475
+   ]
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.613,
+   "rmse": 1.04,
+   "bias": -0.613,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "headline_h1_12",
+   "n": 59,
+   "mae": 0.202,
+   "rmse": 0.391,
+   "bias": -0.186,
+   "n_releases": 18,
+   "n_target_months": 12,
+   "first_target": "2021-03",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 59,
+   "mae": 0.296,
+   "rmse": 0.561,
+   "bias": -0.295,
+   "n_releases": 18,
+   "n_target_months": 12,
+   "first_target": "2021-03",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.574,
+   "rmse": 0.93,
+   "bias": -0.516,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12",
+   "n_matched": 145,
+   "mae_matched": 0.574,
+   "mae_naive_matched": 0.732,
+   "skill": 0.216,
+   "skill_ci90": [
+    0.134,
+    0.295
+   ]
+  },
+  {
+   "era": "surge_2021_2023",
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 145,
+   "mae": 0.732,
+   "rmse": 1.14,
+   "bias": -0.697,
+   "n_releases": 15,
+   "n_target_months": 36,
+   "first_target": "2021-01",
+   "last_target": "2023-12"
+  },
+  {
+   "era": "from_2024",
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 134,
+   "mae": 1.482,
+   "rmse": 2.079,
+   "bias": 1.045,
+   "n_releases": 15,
+   "n_target_months": 33,
+   "first_target": "2024-01",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "from_2024",
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 134,
+   "mae": 0.501,
+   "rmse": 0.6,
+   "bias": -0.142,
+   "n_releases": 15,
+   "n_target_months": 33,
+   "first_target": "2024-01",
+   "last_target": "2026-09",
+   "n_matched": 134,
+   "mae_matched": 0.501,
+   "mae_naive_matched": 1.482,
+   "skill": 0.662,
+   "skill_ci90": [
+    0.513,
+    0.768
+   ]
+  },
+  {
+   "era": "from_2024",
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.266,
+   "rmse": 0.331,
+   "bias": 0.005,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10",
+   "n_matched": 135,
+   "mae_matched": 0.266,
+   "mae_naive_matched": 0.256,
+   "skill": -0.038,
+   "skill_ci90": [
+    -0.2,
+    0.098
+   ]
+  },
+  {
+   "era": "from_2024",
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.256,
+   "rmse": 0.327,
+   "bias": -0.038,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10"
+  },
+  {
+   "era": "from_2024",
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.176,
+   "rmse": 0.256,
+   "bias": 0.059,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10",
+   "n_matched": 135,
+   "mae_matched": 0.176,
+   "mae_naive_matched": 0.487,
+   "skill": 0.639,
+   "skill_ci90": [
+    0.478,
+    0.747
+   ]
+  },
+  {
+   "era": "from_2024",
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.487,
+   "rmse": 0.68,
+   "bias": 0.388,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10"
+  },
+  {
+   "era": "from_2024",
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "headline_h1_12",
+   "n": 43,
+   "mae": 0.186,
+   "rmse": 0.269,
+   "bias": 0.137,
+   "n_releases": 14,
+   "n_target_months": 11,
+   "first_target": "2024-03",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "from_2024",
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 43,
+   "mae": 0.204,
+   "rmse": 0.302,
+   "bias": 0.187,
+   "n_releases": 14,
+   "n_target_months": 11,
+   "first_target": "2024-03",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "from_2024",
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.249,
+   "rmse": 0.301,
+   "bias": 0.01,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10",
+   "n_matched": 135,
+   "mae_matched": 0.249,
+   "mae_naive_matched": 0.422,
+   "skill": 0.411,
+   "skill_ci90": [
+    0.074,
+    0.579
+   ]
+  },
+  {
+   "era": "from_2024",
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 135,
+   "mae": 0.422,
+   "rmse": 0.619,
+   "bias": 0.341,
+   "n_releases": 14,
+   "n_target_months": 34,
+   "first_target": "2024-01",
+   "last_target": "2026-10"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "cpif_annual",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.75,
+   "rmse": 1.198,
+   "bias": 0.322,
+   "n_releases": 49,
+   "n_target_months": 103,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "cpif_annual",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 513,
+   "mae": 0.45,
+   "rmse": 0.596,
+   "bias": 0.117,
+   "n_releases": 49,
+   "n_target_months": 103,
+   "first_target": "2015-03",
+   "last_target": "2026-09",
+   "n_matched": 513,
+   "mae_matched": 0.45,
+   "mae_naive_matched": 0.75,
+   "skill": 0.4,
+   "skill_ci90": [
+    0.248,
+    0.519
+   ]
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "gov_bond_10y",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 368,
+   "mae": 0.357,
+   "rmse": 0.474,
+   "bias": 0.237,
+   "n_releases": 35,
+   "n_target_months": 94,
+   "first_target": "2016-01",
+   "last_target": "2026-10",
+   "n_matched": 368,
+   "mae_matched": 0.357,
+   "mae_naive_matched": 0.251,
+   "skill": -0.424,
+   "skill_ci90": [
+    -0.699,
+    -0.175
+   ]
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "gov_bond_10y",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 368,
+   "mae": 0.251,
+   "rmse": 0.323,
+   "bias": 0.026,
+   "n_releases": 35,
+   "n_target_months": 94,
+   "first_target": "2016-01",
+   "last_target": "2026-10"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "policy_rate",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 344,
+   "mae": 0.09,
+   "rmse": 0.174,
+   "bias": 0.012,
+   "n_releases": 33,
+   "n_target_months": 88,
+   "first_target": "2016-07",
+   "last_target": "2026-10",
+   "n_matched": 344,
+   "mae_matched": 0.09,
+   "mae_naive_matched": 0.235,
+   "skill": 0.617,
+   "skill_ci90": [
+    0.458,
+    0.719
+   ]
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "policy_rate",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 344,
+   "mae": 0.235,
+   "rmse": 0.438,
+   "bias": 0.108,
+   "n_releases": 33,
+   "n_target_months": 88,
+   "first_target": "2016-07",
+   "last_target": "2026-10"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "policy_rate_forward_qmean",
+   "model": "market_forward",
+   "group": "headline_h1_12",
+   "n": 171,
+   "mae": 0.096,
+   "rmse": 0.162,
+   "bias": 0.039,
+   "n_releases": 48,
+   "n_target_months": 35,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "policy_rate_qmean",
+   "model": "riksbank",
+   "group": "headline_h1_12",
+   "n": 171,
+   "mae": 0.085,
+   "rmse": 0.165,
+   "bias": 0.064,
+   "n_releases": 48,
+   "n_target_months": 35,
+   "first_target": "2015-03",
+   "last_target": "2026-09"
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "tbill_3m",
+   "model": "ki",
+   "group": "headline_h1_12",
+   "n": 368,
+   "mae": 0.159,
+   "rmse": 0.217,
+   "bias": 0.011,
+   "n_releases": 35,
+   "n_target_months": 94,
+   "first_target": "2016-01",
+   "last_target": "2026-10",
+   "n_matched": 368,
+   "mae_matched": 0.159,
+   "mae_naive_matched": 0.234,
+   "skill": 0.32,
+   "skill_ci90": [
+    0.093,
+    0.47
+   ]
+  },
+  {
+   "era": "excl_surge_2021_2023",
+   "series": "tbill_3m",
+   "model": "naive_backtest",
+   "group": "headline_h1_12",
+   "n": 368,
+   "mae": 0.234,
+   "rmse": 0.397,
+   "bias": 0.091,
+   "n_releases": 35,
+   "n_target_months": 94,
+   "first_target": "2016-01",
+   "last_target": "2026-10"
+  }
+ ]
+}
