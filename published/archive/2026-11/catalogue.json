@@ -1,0 +1,134 @@
+{
+ "meta": {
+  "schema_version": "1.0",
+  "generated_at": "2026-11-02T13:42:14Z"
+ },
+ "series": [
+  {
+   "source": "riksbank",
+   "series_key": "gov_bond_10y",
+   "source_id": "SEGVB10YC",
+   "first_obs": "2000-01-03",
+   "last_obs": "2026-10-30",
+   "n_obs": 6739,
+   "days_since_last_obs": 3
+  },
+  {
+   "source": "riksbank",
+   "series_key": "policy_rate",
+   "source_id": "SECBREPOEFF",
+   "first_obs": "2000-01-03",
+   "last_obs": "2026-11-02",
+   "n_obs": 6740,
+   "days_since_last_obs": 0
+  },
+  {
+   "source": "riksbank",
+   "series_key": "tbill_3m",
+   "source_id": "SETB3MBENCH",
+   "first_obs": "2000-01-03",
+   "last_obs": "2026-10-30",
+   "n_obs": 6715,
+   "days_since_last_obs": 3
+  },
+  {
+   "source": "scb",
+   "series_key": "cpif_annual",
+   "source_id": "TAB6590",
+   "first_obs": "1988-01-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 465,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_new_1_5y",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_new_3m_1y",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_new_5y_plus",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_new_floating",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_new_total",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_outstanding_1_5y",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_outstanding_3m_1y",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_outstanding_5y_plus",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_outstanding_floating",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  },
+  {
+   "source": "scb",
+   "series_key": "mortgage_outstanding_total",
+   "source_id": "TAB5783",
+   "first_obs": "2005-09-01",
+   "last_obs": "2026-09-01",
+   "n_obs": 253,
+   "days_since_last_obs": 62
+  }
+ ]
+}
