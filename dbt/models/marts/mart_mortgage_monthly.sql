@@ -1,5 +1,6 @@
 -- Households' housing-loan interest rates (percent), monthly, from SCB table TAB5783 (data source: the Riksbank).
--- Average rate at the end of the month. new = new and renegotiated agreements, outstanding = all existing loans.
+-- SCB describes the figure as 'Average interest rate at the end of the month' (not an average of daily values, unlike our
+-- Riksbank rate series). new = new and renegotiated agreements, outstanding = outstanding agreements.
 with base as (
     select
         make_date(cast(substr(json_extract_string(dims, '$.Tid'), 1, 4) as integer),

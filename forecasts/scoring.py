@@ -14,7 +14,9 @@ Rules (documented in forecasts/conventions.yml and docs/forecast_conventions.md;
     (backtest-1 always used the value two months back and flattered the Riksbank: skill 0.37 became 0.29.)
   * skill = 1 - MAE(model) / MAE(benchmark) on the SAME target months and horizons. Its uncertainty is a bootstrap that
     resamples whole rounds/releases (clusters), seed fixed so the numbers do not change between runs.
-  * Eras are fixed in advance, by target month (see ERAS). Do not add or move them after looking at results.
+  * Eras are by target month (see ERAS). They were fixed after the first pooled scoreboard but before any era-level result
+    was computed; 2021-2023 isolates the inflation surge already visible in the pooled bias. Do not add or move them
+    after looking at results.
 """
 from __future__ import annotations
 

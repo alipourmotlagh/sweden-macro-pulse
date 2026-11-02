@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from export.export import build_conventions_payload
+from export.export import RATE_COLUMNS, build_conventions_payload
 from forecasts import riksbank_ledger, run_ledger, scoring
 from forecasts.ledger import read_ledger
 
@@ -25,6 +25,14 @@ def test_every_possible_model_and_series_is_documented():
     series = set(run_ledger.SERIES) | {s for s, _ in riksbank_ledger.SERIES_MAP.values()} | {"cpif_annual"}
     assert models <= set(c["models"]), models - set(c["models"])
     assert series <= set(c["series"]), series - set(c["series"])
+
+
+def test_every_published_series_is_documented_in_both_languages():
+    """Series in the published JSON files (rates, mortgage, CPIF) need a note too, not only the logged forecast series."""
+    published = set(yaml.safe_load((CONV.parent.parent / "config" / "i18n.yml").read_text())["series"]) | set(RATE_COLUMNS)
+    c = conv()
+    assert published <= set(c["series"]), published - set(c["series"])
+    assert all(has_text(c["series"][k]["note"]) for k in published)
 
 
 def test_real_ledger_has_no_undocumented_model_or_series():

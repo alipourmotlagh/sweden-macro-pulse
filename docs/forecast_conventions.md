@@ -43,8 +43,10 @@ It is published as `v1/forecast_conventions.json`. **Any page that shows a forec
     the same month produce identical rows (the ledger refuses changed rows under the same key).
 
 14. **Eras** (scoreboard `by_era`): results are also split by *target month* into before 2021, 2021-2023 (the inflation
-    surge), 2024 onward, and all periods except 2021-2023. The eras are fixed in advance in `forecasts/scoring.py` (`ERAS`)
-    and `forecasts/conventions.yml`; moving them after seeing results would be cherry-picking.
+    surge), 2024 onward, and all periods except 2021-2023. The eras (`ERAS` in `forecasts/scoring.py`, wording in
+    `forecasts/conventions.yml`) were fixed after the first pooled scoreboard but before any era-level result was computed;
+    2021-2023 was chosen to isolate the inflation surge already visible in the pooled bias. Moving them after seeing
+    results would be cherry-picking.
 15. **Honest sample size:** every row shows n (forecasts), `n_releases` (distinct rounds/releases) and `n_target_months`.
     Forecasts from one round overlap heavily, so the number of rounds is the sample that matters.
 16. **Uncertainty:** `skill_ci90` is a 90% interval from a bootstrap over whole rounds/releases (2000 draws, fixed seed);
