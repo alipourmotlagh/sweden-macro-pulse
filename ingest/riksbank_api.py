@@ -2,7 +2,8 @@
 
 Endpoint shape (from Riksbank documentation, NOT yet verified by a live run):
     GET {base}/Observations/{seriesId}/{from}/{to}   ->   [{"date": "2024-01-02", "value": 3.75}, ...]
-Optional header Ocp-Apim-Subscription-Key. Attribution rule: credit Riksbank only on unchanged data.
+Optional header Ocp-Apim-Subscription-Key. Attribution rule: name the Riksbank as source only on unchanged data; processed (derived) series say
+"Own calculations from data published by Sveriges riksbank." (config/i18n.yml, attribution.riksbank).
 """
 from __future__ import annotations
 

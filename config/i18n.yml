@@ -51,8 +51,8 @@ units:
     sv: "procent"
 attribution:
   riksbank:
-    en: "Source: Sveriges riksbank. Derived series are own calculations."
-    sv: "Källa: Sveriges riksbank. Härledda serier är egna beräkningar."
+    en: "Own calculations from data published by Sveriges riksbank."
+    sv: "Egna beräkningar baserade på data som publicerats av Sveriges riksbank."
   scb:
     en: "Source: Statistics Sweden."
     sv: "Källa: Statistiska centralbyrån."

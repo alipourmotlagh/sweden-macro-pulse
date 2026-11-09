@@ -74,7 +74,11 @@ def test_end_to_end(tmp_path, riksbank_payloads):
     data = json.loads((out / "v1" / "rates_monthly.json").read_text())
     assert {s["id"] for s in data["series"]} == {"policy_rate", "tbill_3m", "gov_bond_10y", "spread_10y_policy"}
     assert data["series"][0]["label"]["sv"] == "Styrränta"
-    assert "Sveriges riksbank" in data["meta"]["attribution"]["en"]
+    # Derived series only: must not present the Riksbank as the source of processed statistics.
+    assert data["meta"]["attribution"] == {
+        "en": "Own calculations from data published by Sveriges riksbank.",
+        "sv": "Egna beräkningar baserade på data som publicerats av Sveriges riksbank.",
+    }
     assert (out / "v1" / "rates_monthly.csv").read_text().startswith("month,policy_rate")
     mort = json.loads((out / "v1" / "mortgage_rates_monthly.json").read_text())
     assert len(mort["series"]) == 10 and all(len(s["points"]) == 24 for s in mort["series"])

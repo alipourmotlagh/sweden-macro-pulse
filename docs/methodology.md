@@ -9,7 +9,7 @@
 
 ## Rules
 - Every chart shows source, period covered, and release date.
-- Derived series (for example the 10-year minus policy-rate spread) are labelled own calculation.
+- Derived series (monthly averages of daily Riksbank values and the 10-year minus policy-rate spread) are labelled own calculation. Exact text in `rates_monthly.json` `meta.attribution`: en "Own calculations from data published by Sveriges riksbank.", sv "Egna beräkningar baserade på data som publicerats av Sveriges riksbank." The Riksbank's terms do not allow processed statistics to name it as the source; forecasts and rates reproduced unchanged keep their own credit.
 - Monthly values are simple averages of daily observations.
 - Raw snapshots are never edited; a failed data test blocks publishing.
 
